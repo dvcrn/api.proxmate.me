@@ -1,6 +1,6 @@
 
-User = exports.User = require('../models/user.js');
-Pkg = exports.Pkg = require('../models/package.js');
+User = exports.User = require('../../models/user.js');
+Pkg = exports.Pkg = require('../../models/package.js');
 
 exports.list = (req, res) ->
   res.set('Content-Type', 'application/json');
@@ -21,6 +21,20 @@ exports.list = (req, res) ->
         }
 
       res.json(responseArray)
+  )
+
+exports.update = (req, res) ->
+  res.set('Content-Type', 'application/json');
+
+  Pkg.find({}, (err, packages) ->
+    if err
+      res.send(500, '[]')
+    else
+      responseObject = {}
+      for pkg in packages
+        responseObject[pkg._id] = pkg.version
+
+      res.json(responseObject)
   )
 
 exports.detail = (req, res) ->

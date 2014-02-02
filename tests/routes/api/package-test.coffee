@@ -1,5 +1,5 @@
-api = require '../../routes/api'
-{app} = require '../../app.coffee'
+api = require '../../../routes/api/package'
+{app} = require '../../../app.coffee'
 request = require 'request'
 {assert} = require 'chai'
 
@@ -83,7 +83,7 @@ baseTests = (testEndpoint) ->
 
       done()
 
-describe 'Api', ->
+describe 'Package Api', ->
   before (done) ->
     app.listen 3000
     done()
@@ -93,7 +93,7 @@ describe 'Api', ->
     done()
 
   testEndpoint = 'http://127.0.0.1:3000/api/package/list.json'
-  describe "get #{testEndpoint}", ->
+  describe "list", ->
     baseTests(testEndpoint)
 
     it 'has the correct body', (done) ->
@@ -111,8 +111,20 @@ describe 'Api', ->
         assert.deepEqual(JSON.parse(body), expectedArray)
         done()
 
+  describe "update", ->
+    updateUrl = 'http://127.0.0.1:3000/api/package/update.json'
+    baseTests(updateUrl)
 
-  describe 'API detail', ->
+    it 'has the correct body', (done) ->
+      request updateUrl, (err, res, body) ->
+        expectedObject = {}
+        for pkg in mockPackages
+          expectedObject[pkg._id] = pkg.version
+
+        assert.deepEqual(JSON.parse(body), expectedObject)
+        done()
+
+  describe 'detail', ->
     it 'reacts correctly on nonexisting ID', (done) ->
       request "http://127.0.0.1:3000/api/package/ASDF.json", (err, res, body) ->
         assert.equal(res.statusCode, 500)
