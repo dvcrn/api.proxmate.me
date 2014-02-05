@@ -2,6 +2,8 @@ api = require '../../../routes/api/package'
 {app} = require '../../../app.coffee'
 request = require 'request'
 {assert} = require 'chai'
+{baseTests} = require './helper'
+sinon = require 'sinon'
 
 mockPackages = [{
   "name": "Test Package",
@@ -37,52 +39,6 @@ mockPackages = [{
   "__v": 0
 }]
 
-PackageMock =
-  findMock: (query, callback) ->
-    callback(null, mockPackages)
-
-  findMockThrowingError: (query, callback) ->
-    callback('you suck', [])
-
-  findByIdMock: (id, callback) ->
-    for pkg in mockPackages
-      if pkg._id == id
-        callback(null, pkg)
-        return
-
-    callback(null, [])
-
-  findByIdMockThrowingError: (id, callback) ->
-    callback('you suck', {})
-
-
-api.Pkg.find = PackageMock.findMock
-api.Pkg.findById = PackageMock.findByIdMock
-
-baseTests = (testEndpoint) ->
-  it 'response successfully', (done) ->
-    request testEndpoint, (err, res, body) ->
-      assert.equal(res.statusCode, 200)
-      done()
-
-  it 'has the correct content-type', (done) ->
-    request testEndpoint, (err, res, body) ->
-      assert.equal(res.headers['content-type'], 'application/json')
-      done()
-
-  it 'reacts on database errors', (done) ->
-    api.Pkg.find = PackageMock.findMockThrowingError
-    api.Pkg.findById = PackageMock.findByIdMockThrowingError
-
-    request testEndpoint, (err, res, body) ->
-      assert.deepEqual(JSON.parse(body), [])
-      assert.equal(res.statusCode, 500)
-
-      api.Pkg.find = PackageMock.findMock
-      api.Pkg.findById = PackageMock.findByIdMock
-
-      done()
-
 describe 'Package Api', ->
   before (done) ->
     app.listen 3000
@@ -92,37 +48,50 @@ describe 'Package Api', ->
     app.close()
     done()
 
+  # Generate stubs for mongoose functions
+  before ->
+    this.stubs = [
+      sinon.stub(api.Pkg, 'findById', (id, callback) ->
+        for pkg in mockPackages
+          if pkg._id == id
+            callback(null, pkg)
+            return
+
+        callback(null, [])
+      ),
+      sinon.stub(api.Pkg, 'find', (config, callback) ->
+        callback null, mockPackages
+      )
+    ]
+
+  # Restore original functions
+  after ->
+    for stub in this.stubs
+      stub.restore()
+
+
   testEndpoint = 'http://127.0.0.1:3000/api/package/list.json'
   describe "list", ->
-    baseTests(testEndpoint)
+    expectedArray = []
+    for pkg in mockPackages
+      expectedArray.push {
+        id: pkg._id,
+        name: pkg.name,
+        version: pkg.version,
+        url: pkg.url,
+        createdAt: pkg.createdAt
+      }
 
-    it 'has the correct body', (done) ->
-      request testEndpoint, (err, res, body) ->
-        expectedArray = []
-        for pkg in mockPackages
-          expectedArray.push {
-            id: pkg._id,
-            name: pkg.name,
-            version: pkg.version,
-            url: pkg.url,
-            createdAt: pkg.createdAt
-          }
+    baseTests(testEndpoint, expectedArray)
 
-        assert.deepEqual(JSON.parse(body), expectedArray)
-        done()
-
-  describe "update", ->
+  describe "update list", ->
     updateUrl = 'http://127.0.0.1:3000/api/package/update.json'
-    baseTests(updateUrl)
 
-    it 'has the correct body', (done) ->
-      request updateUrl, (err, res, body) ->
-        expectedObject = {}
-        for pkg in mockPackages
-          expectedObject[pkg._id] = pkg.version
+    expectedObject = {}
+    for pkg in mockPackages
+      expectedObject[pkg._id] = pkg.version
 
-        assert.deepEqual(JSON.parse(body), expectedObject)
-        done()
+    baseTests(updateUrl, expectedObject)
 
   describe 'detail', ->
     it 'reacts correctly on nonexisting ID', (done) ->
@@ -131,14 +100,10 @@ describe 'Package Api', ->
         assert.deepEqual(JSON.parse(body), [])
         done()
 
+    # Execute basetests for every detail page available
     for pkg in mockPackages
       testUrl = "http://127.0.0.1:3000/api/package/#{pkg._id}.json"
       describe "#{testUrl}", ->
-        baseTests(testUrl)
-
-        it 'has the correct body', (done) ->
-          request testUrl, (err, res, body) ->
-            assert.deepEqual(JSON.parse(body), pkg)
-            done()
+        baseTests(testUrl, pkg)
 
 

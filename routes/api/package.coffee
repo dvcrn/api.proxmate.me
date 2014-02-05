@@ -1,6 +1,6 @@
 
-User = exports.User = require('../../models/user.js');
-Pkg = exports.Pkg = require('../../models/package.js');
+User = exports.User = require('../../models/user');
+Pkg = exports.Pkg = require('../../models/package');
 
 exports.list = (req, res) ->
   res.set('Content-Type', 'application/json');

@@ -2,6 +2,7 @@ express = require 'express'
 routes = require './routes'
 user = require './routes/user'
 packageApi = require './routes/api/package'
+serverApi = require './routes/api/server'
 
 http = require 'http'
 path = require 'path'
@@ -28,6 +29,7 @@ app.get('/users', user.list);
 app.get('/api/package/list.json', packageApi.list);
 app.get('/api/package/update.json', packageApi.update);
 app.get('/api/package/:id.json', packageApi.detail);
+app.get('/api/server/list.json', serverApi.list);
 
 if __dirname + '/server.js' == process.argv[1]
   http.createServer(app).listen app.get('port'), ->
