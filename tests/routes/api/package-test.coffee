@@ -3,6 +3,7 @@ request = require 'request'
 sinon = require 'sinon'
 
 {app} = require '../../../app.coffee'
+{server} = require '../../../app.coffee'
 {assert} = require 'chai'
 {baseTests} = require './helper'
 
@@ -11,11 +12,11 @@ sinon = require 'sinon'
 describe 'Package Api', ->
 
   before (done) ->
-    app.listen 3000
+    server.listen 3000
     done()
 
   after (done) ->
-    app.close()
+    server.close()
     done()
 
   # Generate stubs for mongoose functions
@@ -62,7 +63,7 @@ describe 'Package Api', ->
     }
 
   apiTestData.push({
-    'endpoint': 'http://127.0.0.1:3000/api/package/list.json',
+    'endpoint': 'http://127.0.0.1:3000/package/list.json',
     'expectedData': expectedArray
   })
 
@@ -74,7 +75,7 @@ describe 'Package Api', ->
     expectedObject[pkg._id] = pkg.version
 
   apiTestData.push({
-    'endpoint': 'http://127.0.0.1:3000/api/package/update.json',
+    'endpoint': 'http://127.0.0.1:3000/package/update.json',
     'expectedData': expectedObject
   })
 
@@ -82,7 +83,7 @@ describe 'Package Api', ->
 
   # API detail pages
   for pkg in mockPackages
-    testUrl = "http://127.0.0.1:3000/api/package/#{pkg._id}.json"
+    testUrl = "http://127.0.0.1:3000/package/#{pkg._id}.json"
     apiTestData.push({
       'endpoint': testUrl,
       'expectedData': pkg
@@ -90,7 +91,7 @@ describe 'Package Api', ->
 
 
   it 'reacts correctly on nonexisting ID', (done) ->
-    request "http://127.0.0.1:3000/api/package/ASDF.json", (err, res, body) ->
+    request "http://127.0.0.1:3000/package/ASDF.json", (err, res, body) ->
       assert.equal(res.statusCode, 404)
       assert.deepEqual(JSON.parse(body), [])
       done()

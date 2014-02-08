@@ -1,5 +1,6 @@
 serverApi = require '../../../routes/api/server'
 {app} = require '../../../app.coffee'
+{server} = require '../../../app.coffee'
 request = require 'request'
 {assert} = require 'chai'
 {baseTests} = require './helper'
@@ -9,11 +10,11 @@ mockServers = require '../../testdata/servers'
 
 describe 'Server Api', ->
   before (done) ->
-    app.listen 3000
+    server.listen 3000
     done()
 
   after (done) ->
-    app.close()
+    server.close()
     done()
 
   describe 'list', ->
@@ -30,7 +31,7 @@ describe 'Server Api', ->
 
     baseTests.call(
       this,
-      'http://127.0.0.1:3000/api/server/list.json',
+      'http://127.0.0.1:3000/server/list.json',
       mockServers,
       serverApi.Server
     )

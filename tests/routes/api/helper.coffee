@@ -19,9 +19,12 @@ baseTests = (testEndpoint, expectedData, requiredModel) ->
           assert.equal(res.statusCode, 200)
           done()
 
-      it 'should return the correct content-type', (done) ->
+      it 'should return the correct headers', (done) ->
         request apiEndpoint, (err, res, body) ->
           assert.equal(res.headers['content-type'], 'application/json')
+          assert.equal(res.headers['access-control-allow-headers'], 'Content-Type')
+          assert.equal(res.headers['access-control-allow-methods'], 'GET,PUT,POST,DELETE')
+          assert.equal(res.headers['access-control-allow-origin'], 'http://127.0.0.1:9000')
           done()
 
       it 'should have the correct body', (done) ->
