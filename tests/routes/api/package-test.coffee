@@ -1,45 +1,15 @@
 api = require '../../../routes/api/package'
-{app} = require '../../../app.coffee'
 request = require 'request'
-{assert} = require 'chai'
-{baseTests} = require './helper'
 sinon = require 'sinon'
 
-mockPackages = [{
-  "name": "Test Package",
-  "version": 1,
-  "url": "http://pandora.com",
-  "user": "52e51a98217d32e2270e211f",
-  "country": "52e5c40294ed6bd4032daa49",
-  "_id": "52e5c59e18bf010c04b0ef9e",
-  "createdAt": new Date(1390790046874).getTime(),
-  "routeRegex": [
-    "host == 'www.pandora.com'"
-  ],
-  "hosts": [
-    "pandora.com",
-    "*.pandora.com"
-  ],
-  "__v": 0
-}, {
-  "name": "Test Package 2",
-  "version": 2,
-  "url": "http://google.com",
-  "user": "52e51a98217d32e2270e211f",
-  "country": "52e5c40294ed6bd4032daa49",
-  "_id": "1337",
-  "createdAt": new Date(1390790046874).getTime(),
-  "routeRegex": [
-    "host == 'www.pandora.com'"
-  ],
-  "hosts": [
-    "pandora.com",
-    "*.pandora.com"
-  ],
-  "__v": 0
-}]
+{app} = require '../../../app.coffee'
+{assert} = require 'chai'
+{baseTests} = require './helper'
+
+{mockPackages} = require '../../testdata/packages'
 
 describe 'Package Api', ->
+
   before (done) ->
     app.listen 3000
     done()
@@ -49,61 +19,82 @@ describe 'Package Api', ->
     done()
 
   # Generate stubs for mongoose functions
-  before ->
-    this.stubs = [
-      sinon.stub(api.Pkg, 'findById', (id, callback) ->
-        for pkg in mockPackages
-          if pkg._id == id
-            callback(null, pkg)
-            return
+  beforeEach ->
+    this.sandbox = sinon.sandbox.create()
 
-        callback(null, [])
-      ),
-      sinon.stub(api.Pkg, 'find', (config, callback) ->
-        callback null, mockPackages
-      )
-    ]
+    this.findByIdStub = this.sandbox.stub(api.Pkg, 'findById', (id, callback) ->
+      for pkg in mockPackages
+        if pkg._id == id
+          callback(null, pkg)
+          return
+
+      callback(null, null)
+    )
+
+    this.findStub = this.sandbox.stub(api.Pkg, 'find', (config, callback) ->
+      callback null, mockPackages
+    )
 
   # Restore original functions
-  after ->
-    for stub in this.stubs
-      stub.restore()
+  afterEach ->
+    this.sandbox.restore()
 
 
-  testEndpoint = 'http://127.0.0.1:3000/api/package/list.json'
-  describe "list", ->
-    expectedArray = []
-    for pkg in mockPackages
-      expectedArray.push {
-        id: pkg._id,
-        name: pkg.name,
-        version: pkg.version,
-        url: pkg.url,
-        createdAt: pkg.createdAt
-      }
+  apiTestData = []
 
-    baseTests(testEndpoint, expectedArray)
-
-  describe "update list", ->
-    updateUrl = 'http://127.0.0.1:3000/api/package/update.json'
-
-    expectedObject = {}
-    for pkg in mockPackages
-      expectedObject[pkg._id] = pkg.version
-
-    baseTests(updateUrl, expectedObject)
-
-  describe 'detail', ->
-    it 'reacts correctly on nonexisting ID', (done) ->
-      request "http://127.0.0.1:3000/api/package/ASDF.json", (err, res, body) ->
-        assert.equal(res.statusCode, 500)
-        assert.deepEqual(JSON.parse(body), [])
-        done()
-
-    # Execute basetests for every detail page available
-    for pkg in mockPackages
-      testUrl = "http://127.0.0.1:3000/api/package/#{pkg._id}.json"
-      describe "#{testUrl}", ->
-        baseTests(testUrl, pkg)
+  # Since literally every test of this API results in the same thing:
+  # - Test response code
+  # - Test content type
+  # - Test handling of database errors
+  # - Test body
+  # the most dry way is to just create a big array and pass everything to a helper
 
 
+  # API List
+  expectedArray = []
+  for pkg in mockPackages
+    expectedArray.push {
+      id: pkg._id,
+      name: pkg.name,
+      version: pkg.version,
+      url: pkg.url,
+      createdAt: pkg.createdAt
+    }
+
+  apiTestData.push({
+    'endpoint': 'http://127.0.0.1:3000/api/package/list.json',
+    'expectedData': expectedArray
+  })
+
+
+
+  # API update list
+  expectedObject = {}
+  for pkg in mockPackages
+    expectedObject[pkg._id] = pkg.version
+
+  apiTestData.push({
+    'endpoint': 'http://127.0.0.1:3000/api/package/update.json',
+    'expectedData': expectedObject
+  })
+
+
+
+  # API detail pages
+  for pkg in mockPackages
+    testUrl = "http://127.0.0.1:3000/api/package/#{pkg._id}.json"
+    apiTestData.push({
+      'endpoint': testUrl,
+      'expectedData': pkg
+    })
+
+
+  it 'reacts correctly on nonexisting ID', (done) ->
+    request "http://127.0.0.1:3000/api/package/ASDF.json", (err, res, body) ->
+      assert.equal(res.statusCode, 404)
+      assert.deepEqual(JSON.parse(body), [])
+      done()
+
+
+  for element in apiTestData
+    baseTests(element.endpoint, element.expectedData, api.Pkg)

@@ -1,9 +1,9 @@
 
-User = exports.User = require('../../models/user');
-Pkg = exports.Pkg = require('../../models/package');
+User = exports.User = require('../../models/user')
+Pkg = exports.Pkg = require('../../models/package')
 
 exports.list = (req, res) ->
-  res.set('Content-Type', 'application/json');
+  res.set('Content-Type', 'application/json')
 
   Pkg.find({}, (err, packages) ->
     if err
@@ -24,7 +24,7 @@ exports.list = (req, res) ->
   )
 
 exports.update = (req, res) ->
-  res.set('Content-Type', 'application/json');
+  res.set('Content-Type', 'application/json')
 
   Pkg.find({}, (err, packages) ->
     if err
@@ -38,12 +38,14 @@ exports.update = (req, res) ->
   )
 
 exports.detail = (req, res) ->
-  res.set('Content-Type', 'application/json');
+  res.set('Content-Type', 'application/json')
 
   id = req.params.id
   Pkg.findById(id, (err, pkg) ->
-    if err or pkg.length == 0
+    if err
       res.send(500, '[]')
+    else if !pkg
+      res.send(404, '[]')
     else
       res.json(pkg)
   )

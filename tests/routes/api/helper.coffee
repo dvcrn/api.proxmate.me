@@ -8,22 +8,45 @@ sinon = require 'sinon'
  * Also does a comparison between the json parsed body and expectedObject
  * @param  {String} testEndpoint  URL to test
  * @param  {Object} expectedObject expected body
+ * @param  {Object} databaseModel Database object to mock
 ###
-baseTests = (testEndpoint, expectedObject) ->
-  it 'response successfully', (done) ->
-    request testEndpoint, (err, res, body) ->
-      assert.equal(res.statusCode, 200)
-      done()
+baseTests = (testEndpoint, expectedData, requiredModel) ->
+  ((apiEndpoint, expectedData, requiredModel) ->
+    describe "#{apiEndpoint} base tests", ->
 
-  it 'has the correct content-type', (done) ->
-    request testEndpoint, (err, res, body) ->
-      assert.equal(res.headers['content-type'], 'application/json')
-      done()
+      it 'should return the correct statuscode', (done) ->
+        request apiEndpoint, (err, res, body) ->
+          assert.equal(res.statusCode, 200)
+          done()
 
-  it 'has the correct body', (done) ->
-    request testEndpoint, (err, res, body) ->
-      assert.deepEqual(JSON.parse(body), expectedObject)
-      done()
+      it 'should return the correct content-type', (done) ->
+        request apiEndpoint, (err, res, body) ->
+          assert.equal(res.headers['content-type'], 'application/json')
+          done()
+
+      it 'should have the correct body', (done) ->
+        request apiEndpoint, (err, res, body) ->
+          assert.deepEqual(JSON.parse(body), expectedData)
+          done()
+
+      it 'should react correctly on database errors', (done) ->
+        if requiredModel.findById.restore
+          requiredModel.findById.restore()
+
+        if requiredModel.find.restore
+          requiredModel.find.restore()
+
+        this.findByIdStub = this.sandbox.stub(requiredModel, 'findById', (id, callback) ->
+          callback('you suck', null)
+        )
+        this.findStub = this.sandbox.stub(requiredModel, 'find', (string, callback) ->
+          callback('you suck', null)
+        )
+
+        request apiEndpoint, (err, res, body) ->
+          assert.equal(res.statusCode, 500)
+          done()
+  )(testEndpoint, expectedData, requiredModel)
 
 module.exports = {
   baseTests: baseTests
