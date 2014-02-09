@@ -87,12 +87,10 @@ describe 'Package Api', ->
     expectedData = {
       id: pkg._id,
       name: pkg.name,
+      description: pkg.description,
       icon: pkg.icon,
       pageUrl: pkg.pageUrl,
-      version: pkg.version,
-      country: pkg.country,
-      routeRegex: pkg.routeRegex,
-      hosts: pkg.hosts
+      country: pkg.country
     }
 
     apiTestData.push({
@@ -107,6 +105,31 @@ describe 'Package Api', ->
       assert.deepEqual(JSON.parse(body), [])
       done()
 
+
+  # API install pages
+  for pkg in mockPackages
+    testUrl = "http://127.0.0.1:3000/package/#{pkg._id}/install.json"
+    expectedData = {
+      id: pkg._id,
+      name: pkg.name,
+      icon: pkg.icon,
+      pageUrl: pkg.pageUrl,
+      country: pkg.country,
+      routeRegex: pkg.routeRegex,
+      hosts: pkg.hosts
+    }
+
+    apiTestData.push({
+      'endpoint': testUrl,
+      'expectedData': expectedData
+    })
+
+
+  it 'reacts correctly on nonexisting ID', (done) ->
+    request "http://127.0.0.1:3000/package/ASDF/install.json", (err, res, body) ->
+      assert.equal(res.statusCode, 404)
+      assert.deepEqual(JSON.parse(body), [])
+      done()
 
   for element in apiTestData
     baseTests(element.endpoint, element.expectedData, api.Pkg)

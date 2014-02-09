@@ -50,9 +50,28 @@ exports.detail = (req, res) ->
       res.json({
         id: pkg._id,
         name: pkg.name,
+        description: pkg.description,
         icon: pkg.icon,
         pageUrl: pkg.pageUrl,
-        version: pkg.version,
+        country: pkg.country
+      })
+  )
+
+exports.install = (req, res) ->
+  res.set('Content-Type', 'application/json')
+
+  id = req.params.id
+  Pkg.findById(id, (err, pkg) ->
+    if err
+      res.send(500, '[]')
+    else if !pkg
+      res.send(404, '[]')
+    else
+      res.json({
+        id: pkg._id,
+        name: pkg.name,
+        icon: pkg.icon,
+        pageUrl: pkg.pageUrl,
         country: pkg.country,
         routeRegex: pkg.routeRegex,
         hosts: pkg.hosts

@@ -35,6 +35,7 @@ app.get('/users', user.list)
 app.get('/package/list.json', packageApi.list)
 app.get('/package/update.json', packageApi.update)
 app.get('/package/:id.json', packageApi.detail)
+app.get('/package/:id/install.json', packageApi.install)
 app.get('/server/list.json', serverApi.list)
 
 if __dirname + '/server.js' == process.argv[1]

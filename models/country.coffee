@@ -5,7 +5,7 @@ ObjectId = Schema.ObjectId
 Mixed = Schema.Mixed
 
 countrySchema = new Schema(
-	title: String,
+  title: String,
   shortHand: String
 )
 
