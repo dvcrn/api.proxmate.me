@@ -11,7 +11,7 @@ test = [{
   "country": "52e5c40294ed6bd4032daa49",
 
   "createdAt": new Date(1390790046874).getTime(),
-  "routeRegex": [
+  "routing": [
     "host == 'www.pandora.com'"
   ],
   "hosts": [
@@ -31,7 +31,7 @@ test = [{
   "country": "52e5c40294ed6bd4032daa49",
 
   "createdAt": new Date(1390790046874).getTime(),
-  "routeRegex": [
+  "routing": [
     "host == 'www.pandora.com'"
   ],
   "hosts": [

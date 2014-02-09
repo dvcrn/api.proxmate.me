@@ -72,7 +72,7 @@ exports.install = (req, res) ->
         icon: pkg.icon,
         pageUrl: pkg.pageUrl,
         country: pkg.country,
-        routeRegex: pkg.routeRegex,
+        routing: pkg.routing,
         hosts: pkg.hosts
       })
   )
