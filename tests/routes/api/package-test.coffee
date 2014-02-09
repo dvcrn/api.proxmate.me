@@ -112,6 +112,7 @@ describe 'Package Api', ->
     expectedData = {
       id: pkg._id,
       name: pkg.name,
+      version: pkg.version,
       icon: pkg.icon,
       pageUrl: pkg.pageUrl,
       country: pkg.country,
