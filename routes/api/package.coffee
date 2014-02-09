@@ -15,9 +15,9 @@ exports.list = (req, res) ->
         responseArray.push {
           id: pkg._id,
           name: pkg.name,
-          version: pkg.version,
-          url: pkg.url,
-          createdAt: pkg.createdAt
+          description: pkg.description,
+          icon: pkg.icon,
+          pageUrl: pkg.pageUrl
         }
 
       res.json(responseArray)
@@ -47,5 +47,14 @@ exports.detail = (req, res) ->
     else if !pkg
       res.send(404, '[]')
     else
-      res.json(pkg)
+      res.json({
+        id: pkg._id,
+        name: pkg.name,
+        icon: pkg.icon,
+        pageUrl: pkg.pageUrl,
+        version: pkg.version,
+        country: pkg.country,
+        routeRegex: pkg.routeRegex,
+        hosts: pkg.hosts
+      })
   )

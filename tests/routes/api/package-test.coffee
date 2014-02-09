@@ -57,9 +57,9 @@ describe 'Package Api', ->
     expectedArray.push {
       id: pkg._id,
       name: pkg.name,
-      version: pkg.version,
-      url: pkg.url,
-      createdAt: pkg.createdAt
+      description: pkg.description,
+      icon: pkg.icon,
+      pageUrl: pkg.pageUrl
     }
 
   apiTestData.push({
@@ -84,9 +84,20 @@ describe 'Package Api', ->
   # API detail pages
   for pkg in mockPackages
     testUrl = "http://127.0.0.1:3000/package/#{pkg._id}.json"
+    expectedData = {
+      id: pkg._id,
+      name: pkg.name,
+      icon: pkg.icon,
+      pageUrl: pkg.pageUrl,
+      version: pkg.version,
+      country: pkg.country,
+      routeRegex: pkg.routeRegex,
+      hosts: pkg.hosts
+    }
+
     apiTestData.push({
       'endpoint': testUrl,
-      'expectedData': pkg
+      'expectedData': expectedData
     })
 
 
