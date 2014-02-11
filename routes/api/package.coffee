@@ -42,7 +42,10 @@ exports.detail = (req, res) ->
   id = req.params.id
   Pkg.findById(id, (err, pkg) ->
     if err
-      res.send(500, '[]')
+      if err.name is 'CastError'
+        res.send(404, '[]')
+      else
+        res.send(500, '[]')
     else if !pkg
       res.send(404, '[]')
     else
@@ -62,7 +65,10 @@ exports.install = (req, res) ->
   id = req.params.id
   Pkg.findById(id, (err, pkg) ->
     if err
-      res.send(500, '[]')
+      if err.name is 'CastError'
+        res.send(404, '[]')
+      else
+        res.send(500, '[]')
     else if !pkg
       res.send(404, '[]')
     else

@@ -29,7 +29,13 @@ describe 'Package Api', ->
           callback(null, pkg)
           return
 
-      callback(null, null)
+      callback({
+        message: 'Cast to ObjectId failed for value "asdfa345345sdfakosdfjasdf" at path "_id"',
+        name: 'CastError',
+        type: 'ObjectId',
+        value: 'asdfa345345sdfakosdfjasdf',
+        path: '_id'
+      }, null)
     )
 
     this.findStub = this.sandbox.stub(api.Pkg, 'find', (config, callback) ->
