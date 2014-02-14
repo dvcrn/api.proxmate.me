@@ -6,7 +6,7 @@ request = require 'request'
 {baseTests} = require './helper'
 sinon = require 'sinon'
 
-mockServers = require '../../testdata/servers'
+{mockServers} = require '../../testdata/servers'
 
 describe 'Server Api', ->
   before (done) ->
@@ -26,8 +26,6 @@ describe 'Server Api', ->
 
     afterEach ->
       this.sandbox.restore()
-
-    expectedArray = []
 
     baseTests.call(
       this,

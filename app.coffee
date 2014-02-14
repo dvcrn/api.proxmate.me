@@ -3,6 +3,7 @@ routes = require './routes'
 user = require './routes/user'
 packageApi = require './routes/api/package'
 serverApi = require './routes/api/server'
+userApi = require './routes/api/user'
 {allowCrossdomain} = require './middleware/cors-middleware'
 config = require './config/app'
 
@@ -38,6 +39,7 @@ app.get('/package/update.json', packageApi.update)
 app.get('/package/:id.json', packageApi.detail)
 app.get('/package/:id/install.json', packageApi.install)
 app.get('/server/list.json', serverApi.list)
+app.get('/user/:id.json', userApi.detail)
 
 if __dirname + '/server.js' == process.argv[1]
   http.createServer(app).listen app.get('port'), ->
