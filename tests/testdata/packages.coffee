@@ -16,7 +16,14 @@ test = [{
 
   "createdAt": new Date(1390790046874).getTime(),
   "routing": [
-    "host == 'www.pandora.com'"
+    {
+      "startsWith": "",
+      "contains": [
+        "vevo.com",
+        "vevo2.com"
+      ],
+      "host": ""
+    }
   ],
   "hosts": [
     "pandora.com",
@@ -40,7 +47,11 @@ test = [{
 
   "createdAt": new Date(1390790046874).getTime(),
   "routing": [
-    "host == 'www.pandora.com'"
+    {
+      "startsWith": "http://www.beatsmusic.com",
+      "contains": [],
+      "host": ""
+    }
   ],
   "hosts": [
     "pandora.com",

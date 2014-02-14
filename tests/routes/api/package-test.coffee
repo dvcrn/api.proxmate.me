@@ -99,7 +99,9 @@ describe 'Package Api', ->
       pageUrl: pkg.pageUrl,
       country: pkg.country,
       version: pkg.version,
-      screenshots: pkg.screenshots
+      screenshots: pkg.screenshots,
+      routing: pkg.routing,
+      hosts: pkg.hosts,
     }
 
     apiTestData.push({

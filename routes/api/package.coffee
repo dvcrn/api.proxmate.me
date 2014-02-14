@@ -58,7 +58,9 @@ exports.detail = (req, res) ->
         bigIcon: pkg.bigIcon,
         pageUrl: pkg.pageUrl,
         country: pkg.country,
-        screenshots: pkg.screenshots
+        screenshots: pkg.screenshots,
+        routing: pkg.routing,
+        hosts: pkg.hosts
       })
   )
 
