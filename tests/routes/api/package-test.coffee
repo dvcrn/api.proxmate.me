@@ -64,7 +64,7 @@ describe 'Package Api', ->
       id: pkg._id,
       name: pkg.name,
       description: pkg.description,
-      icon: pkg.icon,
+      smallIcon: pkg.smallIcon,
       pageUrl: pkg.pageUrl
     }
 
@@ -94,7 +94,7 @@ describe 'Package Api', ->
       id: pkg._id,
       name: pkg.name,
       description: pkg.description,
-      icon: pkg.icon,
+      smallIcon: pkg.smallIcon,
       pageUrl: pkg.pageUrl,
       country: pkg.country
     }
@@ -119,7 +119,7 @@ describe 'Package Api', ->
       id: pkg._id,
       name: pkg.name,
       version: pkg.version,
-      icon: pkg.icon,
+      smallIcon: pkg.smallIcon,
       pageUrl: pkg.pageUrl,
       country: pkg.country,
       routing: pkg.routing,

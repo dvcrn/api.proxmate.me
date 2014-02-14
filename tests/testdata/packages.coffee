@@ -2,7 +2,11 @@ test = [{
 
   "name": "Test Package",
   "description": "Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends.",
-  "icon": "https://proxmatedavecx.s3.amazonaws.com/service_imgs/pandora.png",
+  "smallIcon": "https://proxmatedavecx.s3.amazonaws.com/service_imgs/pandora.png",
+  "bigIcon": "https://proxmatedavecx.s3.amazonaws.com/service_imgs/pandora.png",
+  "screenshots": [
+    "https://photos-5.dropbox.com/t/0/AADLVMgInaLkelem7hb6rANO6AhzwoeigPiHy-7UpbYgmA/12/27953127/png/1024x768/3/1392375600/0/2/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%202014-02-14%2018.33.25.png/owx93-1LSNjEVRAKmVnKkub6GEPBowFOXEXVlZrO4Ko"
+  ]
   "pageUrl": "http://pandora.com",
 
   "_id": "52e5c59e18bf010c04b0ef9e",
@@ -22,7 +26,11 @@ test = [{
 }, {
   "name": "Test Package 2",
   "description": "Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends.",
-  "icon": "https://proxmatedavecx.s3.amazonaws.com/service_imgs/pandora.png",
+  "smallIcon": "https://proxmatedavecx.s3.amazonaws.com/service_imgs/pandora.png",
+  "bigIcon": "https://proxmatedavecx.s3.amazonaws.com/service_imgs/pandora.png",
+  "screenshots": [
+    "https://photos-5.dropbox.com/t/0/AADLVMgInaLkelem7hb6rANO6AhzwoeigPiHy-7UpbYgmA/12/27953127/png/1024x768/3/1392375600/0/2/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%202014-02-14%2018.33.25.png/owx93-1LSNjEVRAKmVnKkub6GEPBowFOXEXVlZrO4Ko"
+  ]
   "pageUrl": "http://google.com",
 
   "_id": "1337",

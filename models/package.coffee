@@ -7,7 +7,11 @@ Mixed = Schema.Types.Mixed
 packageSchema = new Schema(
   name: String,
   description: String,
-  icon: String,
+
+  smallIcon: String,
+  bigIcon: String,
+  screenshots: Array,
+
   pageUrl: String,
 
   version: Number,
