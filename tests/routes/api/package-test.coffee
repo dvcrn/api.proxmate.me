@@ -95,8 +95,11 @@ describe 'Package Api', ->
       name: pkg.name,
       description: pkg.description,
       smallIcon: pkg.smallIcon,
+      bigIcon: pkg.bigIcon,
       pageUrl: pkg.pageUrl,
-      country: pkg.country
+      country: pkg.country,
+      version: pkg.version,
+      screenshots: pkg.screenshots
     }
 
     apiTestData.push({

@@ -52,10 +52,13 @@ exports.detail = (req, res) ->
       res.json({
         id: pkg._id,
         name: pkg.name,
+        version: pkg.version,
         description: pkg.description,
         smallIcon: pkg.smallIcon,
+        bigIcon: pkg.bigIcon,
         pageUrl: pkg.pageUrl,
-        country: pkg.country
+        country: pkg.country,
+        screenshots: pkg.screenshots
       })
   )
 
