@@ -6,7 +6,7 @@ Mixed = Schema.Mixed
 
 
 userSchema = new Schema(
-	firstName: String,
+  firstName: String,
   lastName: String,
   username: String,
   email: String,
