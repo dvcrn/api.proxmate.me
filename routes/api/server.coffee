@@ -1,14 +1,8 @@
 Server = exports.Server = require('../../models/server')
+ApiHelper = require('./api-helper')
 
 exports.list = (req, res) ->
-  res.set('Content-Type', 'application/json')
-
-  Server.find({}, (err, servers) ->
-    if err
-      res.send(500, [])
-    else
-      for server in servers
-        delete server.ip
-
-      res.json(servers)
+  ApiHelper.setJson(res)
+  ApiHelper.handleFind(Server, {}, res, (collection) ->
+    res.json(collection)
   )

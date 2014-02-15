@@ -5,6 +5,7 @@ Country = exports.Country = require('../../models/country')
 ApiHelper = require('./api-helper')
 
 exports.list = (req, res) ->
+  ApiHelper.setJson(res)
   ApiHelper.handleFind(Pkg, {}, res, (packageCollection) ->
     responseArray = []
     # Strip package information down
@@ -22,6 +23,7 @@ exports.list = (req, res) ->
 
 
 exports.update = (req, res) ->
+  ApiHelper.setJson(res)
   ApiHelper.handleFind(Pkg, {}, res, (packageCollection) ->
     responseObject = {}
     for pkg in packageCollection
@@ -32,6 +34,7 @@ exports.update = (req, res) ->
 
 
 exports.detail = (req, res) ->
+  ApiHelper.setJson(res)
   ApiHelper.handleFindById(Pkg, req.params.id, res, (packageObject) ->
     ApiHelper.handleFindById(Country, packageObject.country, res, (countryObject) ->
 
@@ -68,6 +71,7 @@ exports.detail = (req, res) ->
   )
 
 exports.install = (req, res) ->
+  ApiHelper.setJson(res)
   ApiHelper.handleFindById(Pkg, req.params.id, res, (packageObject) ->
     res.json({
       id: packageObject._id,

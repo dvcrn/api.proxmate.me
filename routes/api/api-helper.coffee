@@ -1,7 +1,5 @@
 class ApiHelper
   handle: (model, functionName, query, responseObject, callback) ->
-    responseObject.set('Content-Type', 'application/json')
-
     model[functionName](query, (err, databaseObject) ->
       if err
         if err.name is 'CastError'
@@ -19,5 +17,8 @@ class ApiHelper
 
   handleFind: (model, query, responseObject, callback) ->
     @handle(model, 'find', query, responseObject, callback)
+
+  setJson: (responseObject) ->
+    responseObject.set('Content-Type', 'application/json')
 
 module.exports = new ApiHelper()
