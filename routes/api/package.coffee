@@ -1,5 +1,6 @@
 User = exports.User = require('../../models/user')
 Pkg = exports.Pkg = require('../../models/package')
+Country = exports.Country = require('../../models/country')
 
 exports.list = (req, res) ->
   res.set('Content-Type', 'application/json')
@@ -49,20 +50,37 @@ exports.detail = (req, res) ->
     else if !pkg
       res.send(404, '[]')
     else
-      res.json({
-        id: pkg._id,
-        name: pkg.name,
-        version: pkg.version,
-        description: pkg.description,
-        smallIcon: pkg.smallIcon,
-        bigIcon: pkg.bigIcon,
-        pageUrl: pkg.pageUrl,
-        country: pkg.country,
-        screenshots: pkg.screenshots,
-        routing: pkg.routing,
-        hosts: pkg.hosts,
-        createdAt: pkg.createdAt
-      })
+      Country.findById(pkg.country, (err, countryResult) ->
+        domains = []
+        for routing in pkg.routing
+          if routing.startsWith
+            domains.push("#{routing.startsWith}*")
+
+          if routing.host
+            domains.push("#{routing.host}")
+
+          for containRule in routing.contains
+            domains.push("*#{containRule}*")
+
+        res.json({
+          id: pkg._id,
+          name: pkg.name,
+          version: pkg.version,
+          description: pkg.description,
+          smallIcon: pkg.smallIcon,
+          bigIcon: pkg.bigIcon,
+          pageUrl: pkg.pageUrl,
+          country: {
+            'title': countryResult.title,
+            'flag': countryResult.flag,
+            'shortHand': countryResult.shortHand
+          },
+          screenshots: pkg.screenshots,
+          touchedDomains: domains,
+          hosts: pkg.hosts,
+          createdAt: pkg.createdAt
+        })
+      )
   )
 
 exports.install = (req, res) ->

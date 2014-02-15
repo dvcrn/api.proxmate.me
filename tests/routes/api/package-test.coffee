@@ -8,6 +8,7 @@ sinon = require 'sinon'
 {baseTests} = require './helper'
 
 {mockPackages} = require '../../testdata/packages'
+{mockCountry} = require '../../testdata/country'
 
 describe 'Package Api', ->
 
@@ -36,6 +37,10 @@ describe 'Package Api', ->
         value: 'asdfa345345sdfakosdfjasdf',
         path: '_id'
       }, null)
+    )
+
+    this.sandbox.stub(api.Country, 'findById', (id, callback) ->
+      callback(null, mockCountry)
     )
 
     this.findStub = this.sandbox.stub(api.Pkg, 'find', (config, callback) ->
@@ -90,6 +95,17 @@ describe 'Package Api', ->
   # API detail pages
   for pkg in mockPackages
     testUrl = "http://127.0.0.1:3000/package/#{pkg._id}.json"
+    domains = []
+    for routing in pkg.routing
+      if routing.startsWith
+        domains.push("#{routing.startsWith}*")
+
+      if routing.host
+        domains.push("#{routing.host}")
+
+      for containRule in routing.contains
+        domains.push("*#{containRule}*")
+
     expectedData = {
       id: pkg._id,
       name: pkg.name,
@@ -97,10 +113,16 @@ describe 'Package Api', ->
       smallIcon: pkg.smallIcon,
       bigIcon: pkg.bigIcon,
       pageUrl: pkg.pageUrl,
-      country: pkg.country,
+
+      country: {
+        'title': mockCountry.title,
+        'flag': mockCountry.flag,
+        'shortHand': mockCountry.shortHand
+      },
+      touchedDomains: domains,
+
       version: pkg.version,
       screenshots: pkg.screenshots,
-      routing: pkg.routing,
       hosts: pkg.hosts,
       createdAt: pkg.createdAt
     }
