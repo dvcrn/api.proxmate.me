@@ -18,7 +18,7 @@ exports.app = app
 exports.server = http.createServer(app)
 
 
-app.set 'port', process.env.PORT || 3000
+app.set 'port', process.argv[2] || 3000
 app.set 'views', path.join(__dirname, 'views')
 app.set 'view engine', 'ejs'
 app.use express.favicon()
