@@ -6,7 +6,8 @@ Mixed = Schema.Mixed
 
 countrySchema = new Schema(
   title: String,
-  shortHand: String
+  shortHand: String,
+  flag: String
 )
 
 module.exports = mongoose.model('Country', countrySchema)
