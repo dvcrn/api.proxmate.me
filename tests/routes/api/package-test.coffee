@@ -9,6 +9,7 @@ sinon = require 'sinon'
 
 {mockPackages} = require '../../testdata/packages'
 {mockCountry} = require '../../testdata/country'
+{mockUser} = require '../../testdata/single-user'
 
 describe 'Package Api', ->
 
@@ -41,6 +42,10 @@ describe 'Package Api', ->
 
     this.sandbox.stub(api.Country, 'findById', (id, callback) ->
       callback(null, mockCountry)
+    )
+
+    this.sandbox.stub(api.User, 'findById', (id, callback) ->
+      callback(null, mockUser)
     )
 
     this.findStub = this.sandbox.stub(api.Pkg, 'find', (config, callback) ->
@@ -113,7 +118,10 @@ describe 'Package Api', ->
       smallIcon: pkg.smallIcon,
       bigIcon: pkg.bigIcon,
       pageUrl: pkg.pageUrl,
-
+      user: {
+        'username': mockUser.username,
+        'email': mockUser.email
+      },
       country: {
         'title': mockCountry.title,
         'flag': mockCountry.flag,
