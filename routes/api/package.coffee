@@ -60,7 +60,8 @@ exports.detail = (req, res) ->
         country: pkg.country,
         screenshots: pkg.screenshots,
         routing: pkg.routing,
-        hosts: pkg.hosts
+        hosts: pkg.hosts,
+        createdAt: pkg.createdAt
       })
   )
 

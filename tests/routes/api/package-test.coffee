@@ -102,6 +102,7 @@ describe 'Package Api', ->
       screenshots: pkg.screenshots,
       routing: pkg.routing,
       hosts: pkg.hosts,
+      createdAt: pkg.createdAt
     }
 
     apiTestData.push({
