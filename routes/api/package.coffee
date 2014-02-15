@@ -2,108 +2,81 @@ User = exports.User = require('../../models/user')
 Pkg = exports.Pkg = require('../../models/package')
 Country = exports.Country = require('../../models/country')
 
+ApiHelper = require('./api-helper')
+
 exports.list = (req, res) ->
-  res.set('Content-Type', 'application/json')
+  ApiHelper.handleFind(Pkg, {}, res, (packageCollection) ->
+    responseArray = []
+    # Strip package information down
+    for pkg in packageCollection
+      responseArray.push {
+        id: pkg._id,
+        name: pkg.name,
+        description: pkg.description,
+        smallIcon: pkg.smallIcon,
+        pageUrl: pkg.pageUrl
+      }
 
-  Pkg.find({}, (err, packages) ->
-    if err
-      res.send(500, '[]')
-    else
-      responseArray = []
-      # Strip package information down
-      for pkg in packages
-        responseArray.push {
-          id: pkg._id,
-          name: pkg.name,
-          description: pkg.description,
-          smallIcon: pkg.smallIcon,
-          pageUrl: pkg.pageUrl
-        }
-
-      res.json(responseArray)
+    res.json(responseArray)
   )
+
 
 exports.update = (req, res) ->
-  res.set('Content-Type', 'application/json')
+  ApiHelper.handleFind(Pkg, {}, res, (packageCollection) ->
+    responseObject = {}
+    for pkg in packageCollection
+      responseObject[pkg._id] = pkg.version
 
-  Pkg.find({}, (err, packages) ->
-    if err
-      res.send(500, '[]')
-    else
-      responseObject = {}
-      for pkg in packages
-        responseObject[pkg._id] = pkg.version
-
-      res.json(responseObject)
+    res.json(responseObject)
   )
 
+
 exports.detail = (req, res) ->
-  res.set('Content-Type', 'application/json')
+  ApiHelper.handleFindById(Pkg, req.params.id, res, (packageObject) ->
+    ApiHelper.handleFindById(Country, packageObject.country, res, (countryObject) ->
 
-  id = req.params.id
-  Pkg.findById(id, (err, pkg) ->
-    if err
-      if err.name is 'CastError'
-        res.send(404, '[]')
-      else
-        res.send(500, '[]')
-    else if !pkg
-      res.send(404, '[]')
-    else
-      Country.findById(pkg.country, (err, countryResult) ->
-        domains = []
-        for routing in pkg.routing
-          if routing.startsWith
-            domains.push("#{routing.startsWith}*")
+      domains = []
+      for routing in packageObject.routing
+        if routing.startsWith
+          domains.push("#{routing.startsWith}*")
 
-          if routing.host
-            domains.push("#{routing.host}")
+        if routing.host
+          domains.push("#{routing.host}")
 
-          for containRule in routing.contains
-            domains.push("*#{containRule}*")
+        for containRule in routing.contains
+          domains.push("*#{containRule}*")
 
-        res.json({
-          id: pkg._id,
-          name: pkg.name,
-          version: pkg.version,
-          description: pkg.description,
-          smallIcon: pkg.smallIcon,
-          bigIcon: pkg.bigIcon,
-          pageUrl: pkg.pageUrl,
-          country: {
-            'title': countryResult.title,
-            'flag': countryResult.flag,
-            'shortHand': countryResult.shortHand
-          },
-          screenshots: pkg.screenshots,
-          touchedDomains: domains,
-          hosts: pkg.hosts,
-          createdAt: pkg.createdAt
-        })
-      )
+      res.json({
+        id: packageObject._id,
+        name: packageObject.name,
+        version: packageObject.version,
+        description: packageObject.description,
+        smallIcon: packageObject.smallIcon,
+        bigIcon: packageObject.bigIcon,
+        pageUrl: packageObject.pageUrl,
+        country: {
+          'title': countryObject.title,
+          'flag': countryObject.flag,
+          'shortHand': countryObject.shortHand
+        },
+        screenshots: packageObject.screenshots,
+        touchedDomains: domains,
+        hosts: packageObject.hosts,
+        createdAt: packageObject.createdAt
+      })
+    )
   )
 
 exports.install = (req, res) ->
-  res.set('Content-Type', 'application/json')
-
-  id = req.params.id
-  Pkg.findById(id, (err, pkg) ->
-    if err
-      if err.name is 'CastError'
-        res.send(404, '[]')
-      else
-        res.send(500, '[]')
-    else if !pkg
-      res.send(404, '[]')
-    else
-      res.json({
-        id: pkg._id,
-        name: pkg.name,
-        version: pkg.version,
-        smallIcon: pkg.smallIcon,
-        pageUrl: pkg.pageUrl,
-        country: pkg.country,
-        routing: pkg.routing,
-        hosts: pkg.hosts
-      })
+  ApiHelper.handleFindById(Pkg, req.params.id, res, (packageObject) ->
+    res.json({
+      id: packageObject._id,
+      name: packageObject.name,
+      version: packageObject.version,
+      smallIcon: packageObject.smallIcon,
+      pageUrl: packageObject.pageUrl,
+      country: packageObject.country,
+      routing: packageObject.routing,
+      hosts: packageObject.hosts
+    })
   )
