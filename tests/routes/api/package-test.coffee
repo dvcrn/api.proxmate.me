@@ -119,6 +119,7 @@ describe 'Package Api', ->
       bigIcon: pkg.bigIcon,
       pageUrl: pkg.pageUrl,
       user: {
+        'twitterHandle': mockUser.twitterHandle,
         'username': mockUser.username,
         'email': mockUser.email
       },

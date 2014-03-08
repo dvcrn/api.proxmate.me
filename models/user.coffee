@@ -9,6 +9,7 @@ userSchema = new Schema(
   firstName: String,
   lastName: String,
   username: String,
+  twitterHandle: String,
   email: String,
   createdAt: {type: Date, default: Date.now}
 )

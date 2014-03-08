@@ -7,6 +7,7 @@ exports.detail = (req, res) ->
   ApiHelper.handleFindById(User, req.params.id, res, (user) ->
     res.json({
       username: user.username,
-      email: user.email
+      email: user.email,
+      twitterHandle: user.twitterHandle
     })
   )

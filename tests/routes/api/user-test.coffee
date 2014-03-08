@@ -44,6 +44,7 @@ describe 'User Api', ->
     # We only want these 2 elements to be in the output json
     expectedData = {
       username: mockUser.username,
+      twitterHandle: mockUser.twitterHandle,
       email: mockUser.email
     }
 

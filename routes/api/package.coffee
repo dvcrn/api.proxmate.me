@@ -62,7 +62,8 @@ exports.detail = (req, res) ->
           pageUrl: packageObject.pageUrl,
           user: {
             'username': userObject.username,
-            'email': userObject.email
+            'email': userObject.email,
+            'twitterHandle': userObject.twitterHandle
           },
           country: {
             'title': countryObject.title,
