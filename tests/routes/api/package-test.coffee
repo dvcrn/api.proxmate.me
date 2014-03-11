@@ -62,6 +62,7 @@ describe 'Package Api', ->
       for pkg in mockPackages
         expectedArray.push {
           id: pkg._id,
+          requireKey: pkg.requireKey,
           name: pkg.name,
           description: pkg.description,
           smallIcon: pkg.smallIcon,
@@ -108,6 +109,7 @@ describe 'Package Api', ->
         smallIcon: testPkg.smallIcon,
         bigIcon: testPkg.bigIcon,
         pageUrl: testPkg.pageUrl,
+        requireKey: testPkg.requireKey,
         user: {
           'twitterHandle': mockUser.twitterHandle,
           'username': mockUser.username,

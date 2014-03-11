@@ -15,6 +15,7 @@ exports.list = (req, res) ->
     for pkg in packageCollection
       responseArray.push {
         id: pkg._id,
+        requireKey: pkg.requireKey,
         name: pkg.name,
         description: pkg.description,
         smallIcon: pkg.smallIcon,
@@ -57,6 +58,7 @@ exports.detail = (req, res) ->
 
         res.json({
           id: packageObject._id,
+          requireKey: packageObject.requireKey,
           name: packageObject.name,
           version: packageObject.version,
           description: packageObject.description,

@@ -10,6 +10,7 @@ test = [{
   "pageUrl": "http://pandora.com",
 
   "_id": "52e5c59e18bf010c04b0ef9e",
+  "requireKey": false,
   "version": 1,
   "user": "52e51a98217d32e2270e211f",
   "country": "52e5c40294ed6bd4032daa49",
