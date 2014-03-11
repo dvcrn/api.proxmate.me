@@ -44,7 +44,7 @@ describe 'Package Api', ->
       callback(null, mockCountry)
     )
 
-    this.sandbox.stub(api.User, 'findById', (id, callback) ->
+    this.userStub = this.sandbox.stub(api.User, 'findById', (id, callback) ->
       callback(null, mockUser)
     )
 
@@ -56,124 +56,181 @@ describe 'Package Api', ->
   afterEach ->
     this.sandbox.restore()
 
+  describe 'list', ->
+    it 'should generate the package list correctly', (done) ->
+      expectedArray = []
+      for pkg in mockPackages
+        expectedArray.push {
+          id: pkg._id,
+          name: pkg.name,
+          description: pkg.description,
+          smallIcon: pkg.smallIcon,
+          pageUrl: pkg.pageUrl
+        }
 
-  apiTestData = []
+      request "http://127.0.0.1:3000/package/list.json", (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(JSON.parse(body), expectedArray)
+        done()
 
-  # Since literally every test of this API results in the same thing:
-  # - Test response code
-  # - Test content type
-  # - Test handling of database errors
-  # - Test body
-  # the most dry way is to just create a big array and pass everything to a helper
+    it 'should generate the update list correctly', (done) ->
+      expectedObject = {}
+      for pkg in mockPackages
+        expectedObject[pkg._id] = pkg.version
 
-
-  # API List
-  expectedArray = []
-  for pkg in mockPackages
-    expectedArray.push {
-      id: pkg._id,
-      name: pkg.name,
-      description: pkg.description,
-      smallIcon: pkg.smallIcon,
-      pageUrl: pkg.pageUrl
-    }
-
-  apiTestData.push({
-    'endpoint': 'http://127.0.0.1:3000/package/list.json',
-    'expectedData': expectedArray
-  })
-
-
-
-  # API update list
-  expectedObject = {}
-  for pkg in mockPackages
-    expectedObject[pkg._id] = pkg.version
-
-  apiTestData.push({
-    'endpoint': 'http://127.0.0.1:3000/package/update.json',
-    'expectedData': expectedObject
-  })
+      request "http://127.0.0.1:3000/package/update.json", (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(JSON.parse(body), expectedObject)
+        done()
 
 
 
-  # API detail pages
-  for pkg in mockPackages
-    testUrl = "http://127.0.0.1:3000/package/#{pkg._id}.json"
-    domains = []
-    for routing in pkg.routing
-      if routing.startsWith
-        domains.push("#{routing.startsWith}*")
+  describe 'detail', ->
+    it 'displays detail pages correctly', (done) ->
+      testPkg = mockPackages[0]
 
-      if routing.host
-        domains.push("#{routing.host}")
+      domains = []
+      for routing in testPkg.routing
+        if routing.startsWith
+          domains.push("#{routing.startsWith}*")
 
-      for containRule in routing.contains
-        domains.push("*#{containRule}*")
+        if routing.host
+          domains.push("#{routing.host}")
 
-    expectedData = {
-      id: pkg._id,
-      name: pkg.name,
-      description: pkg.description,
-      smallIcon: pkg.smallIcon,
-      bigIcon: pkg.bigIcon,
-      pageUrl: pkg.pageUrl,
-      user: {
-        'twitterHandle': mockUser.twitterHandle,
-        'username': mockUser.username,
-        'email': mockUser.email
-      },
-      country: {
-        'title': mockCountry.title,
-        'flag': mockCountry.flag,
-        'shortHand': mockCountry.shortHand
-      },
-      touchedDomains: domains,
+        for containRule in routing.contains
+          domains.push("*#{containRule}*")
 
-      version: pkg.version,
-      screenshots: pkg.screenshots,
-      hosts: pkg.hosts,
-      createdAt: pkg.createdAt
-    }
+      testUrl = "http://127.0.0.1:3000/package/#{testPkg._id}.json"
+      expectedData = {
+        id: testPkg._id,
+        name: testPkg.name,
+        description: testPkg.description,
+        smallIcon: testPkg.smallIcon,
+        bigIcon: testPkg.bigIcon,
+        pageUrl: testPkg.pageUrl,
+        user: {
+          'twitterHandle': mockUser.twitterHandle,
+          'username': mockUser.username,
+          'email': mockUser.email
+        },
+        country: {
+          'title': mockCountry.title,
+          'flag': mockCountry.flag,
+          'shortHand': mockCountry.shortHand
+        },
+        touchedDomains: domains,
 
-    apiTestData.push({
-      'endpoint': testUrl,
-      'expectedData': expectedData
-    })
+        version: testPkg.version,
+        screenshots: testPkg.screenshots,
+        hosts: testPkg.hosts,
+        createdAt: testPkg.createdAt
+      }
 
-
-  it 'reacts correctly on nonexisting ID', (done) ->
-    request "http://127.0.0.1:3000/package/ASDF.json", (err, res, body) ->
-      assert.equal(res.statusCode, 404)
-      assert.deepEqual(JSON.parse(body), [])
-      done()
+      request testUrl, (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(JSON.parse(body), expectedData)
+        done()
 
 
-  # API install pages
-  for pkg in mockPackages
-    testUrl = "http://127.0.0.1:3000/package/#{pkg._id}/install.json"
-    expectedData = {
-      id: pkg._id,
-      name: pkg.name,
-      version: pkg.version,
-      smallIcon: pkg.smallIcon,
-      pageUrl: pkg.pageUrl,
-      country: pkg.country,
-      routing: pkg.routing,
-      hosts: pkg.hosts
-    }
+    it 'reacts correctly on nonexisting ID', (done) ->
+      request "http://127.0.0.1:3000/package/ASDF.json", (err, res, body) ->
+        assert.equal(res.statusCode, 404)
+        assert.deepEqual(JSON.parse(body), [])
+        done()
 
-    apiTestData.push({
-      'endpoint': testUrl,
-      'expectedData': expectedData
-    })
+  describe 'install', ->
+    it 'generates install page correctly', (done) ->
+      testPkg = mockPackages[0]
+      testUrl = "http://127.0.0.1:3000/package/#{testPkg._id}/install.json"
 
+      expectedData = {
+        id: testPkg._id,
+        name: testPkg.name,
+        version: testPkg.version,
+        smallIcon: testPkg.smallIcon,
+        pageUrl: testPkg.pageUrl,
+        country: testPkg.country,
+        routing: testPkg.routing,
+        hosts: testPkg.hosts
+      }
 
-  it 'reacts correctly on nonexisting ID', (done) ->
-    request "http://127.0.0.1:3000/package/ASDF/install.json", (err, res, body) ->
-      assert.equal(res.statusCode, 404)
-      assert.deepEqual(JSON.parse(body), [])
-      done()
+      request testUrl, (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(JSON.parse(body), expectedData)
+        done()
 
-  for element in apiTestData
-    baseTests(element.endpoint, element.expectedData, api.Pkg)
+    it 'reacts correctly on nonexisting ID', (done) ->
+      request "http://127.0.0.1:3000/package/ASDF/install.json", (err, res, body) ->
+        assert.equal(res.statusCode, 404)
+        assert.deepEqual(JSON.parse(body), [])
+        done()
+
+    it 'reacts correctly on wrong access level (no key)', (done) ->
+      testPkg = mockPackages[1]
+      testUrl = "http://127.0.0.1:3000/package/#{testPkg._id}/install.json"
+      # No key given
+
+      request testUrl, (err, res, body) ->
+        assert.equal(res.statusCode, 401)
+        assert.deepEqual(JSON.parse(body), {message: 'This ressource requires a valid key. Do you have one?'})
+        done()
+
+    it 'reacts correctly on invalid access key', (done) ->
+      testPkg = mockPackages[1]
+      testUrl = "http://127.0.0.1:3000/package/#{testPkg._id}/install.json?key=o20D3VUfxlS4HPXgJXy2gQ=="
+
+      # Emulate a exception
+      this.userStub.restore()
+      this.userStub = this.sandbox.stub(api.User, 'findById', (id, callback) ->
+        callback({
+          message: 'Cast to ObjectId failed for value "asdfa345345sdfakosdfjasdf" at path "_id"',
+          name: 'CastError',
+          type: 'ObjectId',
+          value: 'asdfa345345sdfakosdfjasdf',
+          path: '_id'
+        }, null)
+      )
+
+      request testUrl, (err, res, body) ->
+        assert.equal(res.statusCode, 401)
+        assert.deepEqual(JSON.parse(body), {message: 'The key you entered is invalid. Please provide a valid one.'})
+        done()
+
+    it 'reacts correctly on expired access key', (done) ->
+      testPkg = mockPackages[1]
+      testUrl = "http://127.0.0.1:3000/package/#{testPkg._id}/install.json?key=o20D3VUfxlS4HPXgJXy2gQ=="
+
+      # Emulate a user object that is already expired
+      expiredDate = new Date()
+      expiredDate.setDate(expiredDate.getDate() - 1)
+
+      this.userStub.restore()
+      this.userStub = this.sandbox.stub(api.User, 'findById', (id, callback) ->
+        callback(null, {
+          'expiresAt': expiredDate
+        })
+      )
+
+      request testUrl, (err, res, body) ->
+        assert.equal(res.statusCode, 401)
+        assert.deepEqual(JSON.parse(body), {message: 'The key you have entered is not valid anymore. Please consider renewing it :)'})
+        done()
+
+    it 'reacts correctly on valid access key', (done) ->
+      testPkg = mockPackages[1]
+      testUrl = "http://127.0.0.1:3000/package/#{testPkg._id}/install.json?key=o20D3VUfxlS4HPXgJXy2gQ=="
+
+      # Emulate a user object that is not expired yet
+      expiredDate = new Date()
+      expiredDate.setDate(expiredDate.getDate() + 1)
+
+      this.userStub.restore()
+      this.userStub = this.sandbox.stub(api.User, 'findById', (id, callback) ->
+        callback(null, {
+          'expiresAt': expiredDate
+        })
+      )
+
+      request testUrl, (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        done()

@@ -2,6 +2,9 @@ User = exports.User = require('../../models/user')
 Pkg = exports.Pkg = require('../../models/package')
 Country = exports.Country = require('../../models/country')
 
+config = require '../../config/app'
+crypto = require('crypto')
+
 ApiHelper = require('./api-helper')
 
 exports.list = (req, res) ->
@@ -82,6 +85,33 @@ exports.detail = (req, res) ->
 exports.install = (req, res) ->
   ApiHelper.setJson(res)
   ApiHelper.handleFindById(Pkg, req.params.id, res, (packageObject) ->
+    # Check for accessLevel
+    if packageObject.requireKey
+      # Check if we even have a access key set
+      if not req.query.key
+        res.json({message: 'This ressource requires a valid key. Do you have one?'}, 401)
+        return
+
+      # Try to decrypt the key
+      decipher = crypto.createDecipher('aes-256-cbc', config.crypto.pepper)
+      decryptedKey = decipher.update(req.query.key, 'base64', 'utf8');
+      try
+        decryptedKey = decryptedKey + decipher.final('utf8')
+      catch error
+        res.json({message: 'The key you entered is invalid. Please provide a valid one.'}, 401)
+        return
+
+      # Query to see if we have a user with that key
+      User.findById(decryptedKey, (err, obj) ->
+        if err or !obj
+          res.json({message: 'The key you entered is invalid. Please provide a valid one.'}, 401)
+          return
+
+        if new Date() >= obj.expiresAt
+          res.json({message: 'The key you have entered is not valid anymore. Please consider renewing it :)'}, 401)
+          return
+      )
+
     res.json({
       id: packageObject._id,
       name: packageObject.name,

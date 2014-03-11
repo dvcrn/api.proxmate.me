@@ -4,3 +4,6 @@ module.exports =
 
   database:
     mongo_url: process.env['MONGOHQ_URL']
+
+  crypto:
+    pepper: process.env['PASSWORD_PEPPER']

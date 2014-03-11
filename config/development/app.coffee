@@ -4,3 +4,6 @@ module.exports =
 
   database:
     mongo_url: "mongodb://localhost/proxmate"
+
+  crypto:
+    pepper: "foobar"

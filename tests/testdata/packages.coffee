@@ -41,6 +41,7 @@ test = [{
   "pageUrl": "http://google.com",
 
   "_id": "1337",
+  "requireKey": true,
   "version": 2,
   "user": "52e51a98217d32e2270e211f",
   "country": "52e5c40294ed6bd4032daa49",

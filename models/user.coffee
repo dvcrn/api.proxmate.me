@@ -11,6 +11,8 @@ userSchema = new Schema(
   username: String,
   twitterHandle: String,
   email: String,
+
+  expiresAt: {type: Date, default: Date.now},
   createdAt: {type: Date, default: Date.now}
 )
 
