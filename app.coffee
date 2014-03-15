@@ -5,7 +5,7 @@ packageApi = require './routes/api/package'
 serverApi = require './routes/api/server'
 countryApi = require './routes/api/country'
 userApi = require './routes/api/user'
-{allowCrossdomain} = require './middleware/cors-middleware'
+{headerMiddleware} = require './middleware/custom-header'
 config = require './config/app'
 
 http = require 'http'
@@ -25,7 +25,7 @@ app.use express.favicon()
 app.use express.logger('dev')
 app.use express.json()
 app.use express.urlencoded()
-app.use allowCrossdomain
+app.use headerMiddleware
 app.use express.methodOverride()
 app.use app.router
 app.use express.static(path.join(__dirname, 'public'))
