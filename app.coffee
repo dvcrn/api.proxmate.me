@@ -5,6 +5,7 @@ packageApi = require './routes/api/package'
 serverApi = require './routes/api/server'
 countryApi = require './routes/api/country'
 userApi = require './routes/api/user'
+urlApi = require './routes/api/url'
 {headerMiddleware} = require './middleware/custom-header'
 config = require './config/app'
 
@@ -43,6 +44,7 @@ app.get('/package/:id/install.json', packageApi.install)
 app.get('/server/list.json', serverApi.list)
 app.get('/user/:id.json', userApi.detail)
 app.get('/country/:id.json', countryApi.detail)
+app.get('/url/list.json', urlApi.list)
 
 if __dirname + '/server.js' == process.argv[1]
   http.createServer(app).listen app.get('port'), ->
