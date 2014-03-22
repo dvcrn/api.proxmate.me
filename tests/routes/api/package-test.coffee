@@ -11,6 +11,8 @@ sinon = require 'sinon'
 {mockCountry} = require '../../testdata/country'
 {mockUser} = require '../../testdata/single-user'
 
+ApiHelper = require('../../../routes/api/api-helper')
+
 describe 'Package Api', ->
 
   before (done) ->
@@ -76,14 +78,37 @@ describe 'Package Api', ->
 
     it 'should generate the update list correctly', (done) ->
       expectedObject = {}
+      validateKeyStub = this.sandbox.stub(ApiHelper, 'validateKey', ->
+        return {success:true}
+      )
+
       for pkg in mockPackages
         expectedObject[pkg._id] = pkg.version
 
-      request "http://127.0.0.1:3000/package/update.json", (err, res, body) ->
+      request "http://127.0.0.1:3000/package/update.json?key=asdf", (err, res, body) ->
         assert.equal(res.statusCode, 200)
         assert.deepEqual(JSON.parse(body), expectedObject)
+
+        assert.isTrue(validateKeyStub.calledOnce)
         done()
 
+    it 'should set premium packages to version -1 on wrong key', (done) ->
+      expectedObject = {}
+      validateKeyStub = this.sandbox.stub(ApiHelper, 'validateKey', ->
+        return {success:false}
+      )
+
+      for pkg in mockPackages
+        expectedObject[pkg._id] = pkg.version
+        if pkg.requireKey
+          expectedObject[pkg._id] = -1
+
+      request "http://127.0.0.1:3000/package/update.json?key=asdf", (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(JSON.parse(body), expectedObject)
+
+        assert.isTrue(validateKeyStub.calledOnce)
+        done()
 
 
   describe 'detail', ->

@@ -3,7 +3,6 @@ Pkg = exports.Pkg = require('../../models/package')
 Country = exports.Country = require('../../models/country')
 
 config = require '../../config/app'
-crypto = require('crypto')
 
 ApiHelper = require('./api-helper')
 
@@ -27,11 +26,24 @@ exports.list = (req, res) ->
 
 
 exports.update = (req, res) ->
+  isDonator = false
+  if req.query.key?
+    keyValidation = ApiHelper.validateKey(req.query.key)
+    if keyValidation.success
+      isDonator = true
+
   ApiHelper.setJson(res)
   ApiHelper.handleFind(Pkg, {}, res, (packageCollection) ->
     responseObject = {}
     for pkg in packageCollection
-      responseObject[pkg._id] = pkg.version
+      # In case a key requires a key, we need to check if the user is providing one
+      if pkg.requireKey
+        responseObject[pkg._id] = -1
+
+        if isDonator
+          responseObject[pkg._id] = pkg.version
+      else
+        responseObject[pkg._id] = pkg.version
 
     res.json(responseObject)
   )
@@ -90,29 +102,7 @@ exports.install = (req, res) ->
     # Check for accessLevel
     if packageObject.requireKey
       # Check if we even have a access key set
-      if not req.query.key
-        res.json({message: 'This ressource requires a valid key. Do you have one?'}, 401)
-        return
-
-      # Try to decrypt the key
-      decipher = crypto.createDecipher('aes-256-cbc', config.crypto.pepper)
-      decryptedKey = decipher.update(req.query.key, 'base64', 'utf8');
-      try
-        decryptedKey = decryptedKey + decipher.final('utf8')
-      catch error
-        res.json({message: 'The key you entered is invalid. Please provide a valid one.'}, 401)
-        return
-
-      # Query to see if we have a user with that key
-      User.findById(decryptedKey, (err, obj) ->
-        if err or !obj
-          res.json({message: 'The key you entered is invalid. Please provide a valid one.'}, 401)
-          return
-
-        if new Date() >= obj.expiresAt
-          res.json({message: 'The key you have entered is not valid anymore. Please consider renewing it :)'}, 401)
-          return
-      )
+      ApiHelper.requireKey(req, res)
 
     res.json({
       id: packageObject._id,
