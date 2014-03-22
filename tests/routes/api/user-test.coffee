@@ -1,4 +1,3 @@
-api = require '../../../routes/api/user'
 request = require 'request'
 sinon = require 'sinon'
 
@@ -22,6 +21,7 @@ describe 'User Api', ->
 
   beforeEach ->
     this.sandbox = sinon.sandbox.create()
+
   afterEach ->
     this.sandbox.restore()
 

@@ -1,4 +1,3 @@
-api = require '../../../routes/api/country'
 request = require 'request'
 sinon = require 'sinon'
 
@@ -7,6 +6,8 @@ sinon = require 'sinon'
 {assert} = require 'chai'
 
 {mockCountry} = require '../../testdata/country'
+
+ApiHelper = require('../../../routes/api/api-helper')
 
 describe 'Country API', ->
   before (done) ->
@@ -17,27 +18,17 @@ describe 'Country API', ->
     server.close()
     done()
 
-  describe 'detail', ->
-    beforeEach ->
-      this.sandbox = sinon.sandbox.create()
-      # Stub the findById function and return a mock country
-      this.sandbox.stub(api.Country, 'findById', (id, callback) ->
-        if id is mockCountry._id
-          callback null, mockCountry
-        else
-          callback({
-            message: 'Cast to ObjectId failed for value "52e51a98217d32e2270e211f" at path "_id"',
-            name: 'CastError',
-            type: 'ObjectId',
-            value: '52e51a98217d32e2270e211f',
-            path: '_id'
-          }, null)
-      )
+  beforeEach ->
+    this.sandbox = sinon.sandbox.create()
+    
+  afterEach ->
+    this.sandbox.restore()
 
-    afterEach ->
-      this.sandbox.restore()
+  describe 'detail', ->
 
     it 'generates the country detail page correctly', (done) ->
+      this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> callback mockCountry
+
       expectedData = {
         title: mockCountry.title,
         shortHand: mockCountry.shortHand,
@@ -50,6 +41,8 @@ describe 'Country API', ->
         done()
 
     it 'reacts correctly on nonexisting ID', (done) ->
+      this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> res.send('[]', 404)
+
       request "http://127.0.0.1:3000/country/ASDF.json", (err, res, body) ->
         assert.equal(res.statusCode, 404)
         assert.deepEqual(JSON.parse(body), [])
