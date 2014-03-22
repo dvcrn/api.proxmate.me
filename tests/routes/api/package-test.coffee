@@ -22,42 +22,16 @@ describe 'Package Api', ->
     server.close()
     done()
 
-  # Generate stubs for mongoose functions
   beforeEach ->
     this.sandbox = sinon.sandbox.create()
-
-    this.findByIdStub = this.sandbox.stub(api.Pkg, 'findById', (id, callback) ->
-      for pkg in mockPackages
-        if pkg._id == id
-          callback(null, pkg)
-          return
-
-      callback({
-        message: 'Cast to ObjectId failed for value "asdfa345345sdfakosdfjasdf" at path "_id"',
-        name: 'CastError',
-        type: 'ObjectId',
-        value: 'asdfa345345sdfakosdfjasdf',
-        path: '_id'
-      }, null)
-    )
-
-    this.sandbox.stub(api.Country, 'findById', (id, callback) ->
-      callback(null, mockCountry)
-    )
-
-    this.userStub = this.sandbox.stub(api.User, 'findById', (id, callback) ->
-      callback(null, mockUser)
-    )
-
-    this.findStub = this.sandbox.stub(api.Pkg, 'find', (config, callback) ->
-      callback null, mockPackages
-    )
-
-  # Restore original functions
+    
   afterEach ->
     this.sandbox.restore()
 
   describe 'list', ->
+    beforeEach ->
+      this.sandbox.stub ApiHelper, 'handleFind', (model, id, res, callback) -> callback mockPackages
+
     it 'should generate the package list correctly', (done) ->
       expectedArray = []
       for pkg in mockPackages
@@ -118,6 +92,14 @@ describe 'Package Api', ->
 
   describe 'detail', ->
     it 'displays detail pages correctly', (done) ->
+      this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) ->
+        if model is api.User
+          callback mockUser
+        if model is api.Country
+          callback mockCountry
+        if model is api.Pkg
+          callback mockPackages[0]
+
       testPkg = mockPackages[0]
 
       domains = []
@@ -165,6 +147,8 @@ describe 'Package Api', ->
 
 
     it 'reacts correctly on nonexisting ID', (done) ->
+      this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> res.send('[]', 404)
+
       request "http://127.0.0.1:3000/package/ASDF.json", (err, res, body) ->
         assert.equal(res.statusCode, 404)
         assert.deepEqual(JSON.parse(body), [])
@@ -172,6 +156,8 @@ describe 'Package Api', ->
 
   describe 'install', ->
     it 'generates install page correctly', (done) ->
+      this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> callback mockPackages[0]
+
       testPkg = mockPackages[0]
       testUrl = "http://127.0.0.1:3000/package/#{testPkg._id}/install.json"
 
@@ -192,6 +178,7 @@ describe 'Package Api', ->
         done()
 
     it 'reacts correctly on nonexisting ID', (done) ->
+      this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> res.send('[]', 404)
       request "http://127.0.0.1:3000/package/ASDF/install.json", (err, res, body) ->
         assert.equal(res.statusCode, 404)
         assert.deepEqual(JSON.parse(body), [])
