@@ -26,7 +26,7 @@ describe 'User Api', ->
     this.sandbox.restore()
 
   describe 'detail', ->
-    it 'generates the detail page correctly', ->
+    it 'generates the detail page correctly', (done) ->
       # Fake helper to directly return the object
       this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> callback mockUser
 
