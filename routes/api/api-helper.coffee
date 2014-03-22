@@ -49,7 +49,7 @@ class ApiHelper
   requireKey: (req, res) ->
     if not req.query.key
       res.json({message: 'This ressource requires a valid key. Do you have one?'}, 401)
-      return
+      return false
 
     validationResult = @validateKey(req.query.key)
     if validationResult.success
