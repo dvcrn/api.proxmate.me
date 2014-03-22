@@ -3,7 +3,6 @@ urlApi = require '../../../routes/api/url'
 {server} = require '../../../app.coffee'
 request = require 'request'
 {assert} = require 'chai'
-{baseTests} = require './helper'
 sinon = require 'sinon'
 
 {mockServers} = require '../../testdata/servers'

@@ -5,7 +5,6 @@ sinon = require 'sinon'
 {app} = require '../../../app.coffee'
 {server} = require '../../../app.coffee'
 {assert} = require 'chai'
-{baseTests} = require './helper'
 
 {mockPackages} = require '../../testdata/packages'
 {mockCountry} = require '../../testdata/country'
@@ -92,7 +91,7 @@ describe 'Package Api', ->
         assert.isTrue(validateKeyStub.calledOnce)
         done()
 
-    it 'should set premium packages to version -1 on wrong key', (done) ->
+    it 'should set donator packages to version -1 on wrong or no key', (done) ->
       expectedObject = {}
       validateKeyStub = this.sandbox.stub(ApiHelper, 'validateKey', ->
         return {success:false}
@@ -108,7 +107,13 @@ describe 'Package Api', ->
         assert.deepEqual(JSON.parse(body), expectedObject)
 
         assert.isTrue(validateKeyStub.calledOnce)
-        done()
+
+        request "http://127.0.0.1:3000/package/update.json", (err, res, body) ->
+          assert.equal(res.statusCode, 200)
+          assert.deepEqual(JSON.parse(body), expectedObject)
+
+          assert.isTrue(validateKeyStub.calledOnce)
+          done()
 
 
   describe 'detail', ->

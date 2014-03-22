@@ -5,7 +5,6 @@ sinon = require 'sinon'
 {app} = require '../../../app.coffee'
 {server} = require '../../../app.coffee'
 {assert} = require 'chai'
-{baseTests} = require './helper'
 
 {mockCountry} = require '../../testdata/country'
 
@@ -38,18 +37,17 @@ describe 'Country API', ->
     afterEach ->
       this.sandbox.restore()
 
-    expectedData = {
-      title: mockCountry.title,
-      shortHand: mockCountry.shortHand,
-      flag: mockCountry.flag
-    }
+    it 'generates the country detail page correctly', (done) ->
+      expectedData = {
+        title: mockCountry.title,
+        shortHand: mockCountry.shortHand,
+        flag: mockCountry.flag
+      }
 
-    baseTests.call(
-      this,
-      'http://127.0.0.1:3000/country/52e5c40294ed6bd4032daa49.json',
-      expectedData,
-      api.Country
-    )
+      request "http://127.0.0.1:3000/country/52e5c40294ed6bd4032daa49.json", (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(JSON.parse(body), expectedData)
+        done()
 
     it 'reacts correctly on nonexisting ID', (done) ->
       request "http://127.0.0.1:3000/country/ASDF.json", (err, res, body) ->

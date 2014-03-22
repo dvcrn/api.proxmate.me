@@ -5,11 +5,6 @@ sinon = require 'sinon'
 {app} = require '../../../app.coffee'
 {server} = require '../../../app.coffee'
 {assert} = require 'chai'
-{baseTests} = require './helper'
-
-{mockPackages} = require '../../testdata/packages'
-{mockCountry} = require '../../testdata/country'
-{mockUser} = require '../../testdata/single-user'
 
 ApiHelper = require('../../../routes/api/api-helper')
 
