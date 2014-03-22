@@ -26,27 +26,31 @@ exports.list = (req, res) ->
 
 
 exports.update = (req, res) ->
-  isDonator = false
-  if req.query.key?
-    keyValidation = ApiHelper.validateKey(req.query.key)
-    if keyValidation.success
-      isDonator = true
 
-  ApiHelper.setJson(res)
-  ApiHelper.handleFind(Pkg, {}, res, (packageCollection) ->
-    responseObject = {}
-    for pkg in packageCollection
-      # In case a key requires a key, we need to check if the user is providing one
-      if pkg.requireKey
-        responseObject[pkg._id] = -1
+  handleRequest = (isDonator) ->
+    ApiHelper.handleFind(Pkg, {}, res, (packageCollection) ->
+      responseObject = {}
+      for pkg in packageCollection
+        # In case a key requires a key, we need to check if the user is providing one
+        if pkg.requireKey
+          responseObject[pkg._id] = -1
 
-        if isDonator
+          if isDonator
+            responseObject[pkg._id] = pkg.version
+        else
           responseObject[pkg._id] = pkg.version
-      else
-        responseObject[pkg._id] = pkg.version
 
-    res.json(responseObject)
-  )
+      return res.json(responseObject)
+    )
+
+  if req.query.key?
+    ApiHelper.validateKey req.query.key, (status, message) ->
+      if status
+        handleRequest true
+      else
+        handleRequest false
+  else
+     handleRequest false
 
 
 exports.detail = (req, res) ->
@@ -99,12 +103,8 @@ exports.detail = (req, res) ->
 exports.install = (req, res) ->
   ApiHelper.setJson(res)
   ApiHelper.handleFindById(Pkg, req.params.id, res, (packageObject) ->
-    # Check for accessLevel
-    if packageObject.requireKey
-      # Check if we even have a access key set
-      ApiHelper.requireKey(req, res)
-
-    res.json({
+    # Prepare response object
+    responseObject =
       id: packageObject._id,
       name: packageObject.name,
       version: packageObject.version,
@@ -113,5 +113,12 @@ exports.install = (req, res) ->
       country: packageObject.country,
       routing: packageObject.routing,
       hosts: packageObject.hosts
-    })
+
+    # Check for accessLevel
+    if packageObject.requireKey
+      # Check if we even have a access key set
+      ApiHelper.requireKey req, res, ->
+        res.json(responseObject)
+    else
+      res.json(responseObject)
   )

@@ -24,7 +24,7 @@ describe 'Package Api', ->
 
   beforeEach ->
     this.sandbox = sinon.sandbox.create()
-    
+
   afterEach ->
     this.sandbox.restore()
 
@@ -51,8 +51,8 @@ describe 'Package Api', ->
 
     it 'should generate the update list correctly', (done) ->
       expectedObject = {}
-      validateKeyStub = this.sandbox.stub(ApiHelper, 'validateKey', ->
-        return {success:true}
+      validateKeyStub = this.sandbox.stub(ApiHelper, 'validateKey', (key, callback) ->
+        callback true
       )
 
       for pkg in mockPackages
@@ -67,9 +67,7 @@ describe 'Package Api', ->
 
     it 'should set donator packages to version -1 on wrong or no key', (done) ->
       expectedObject = {}
-      validateKeyStub = this.sandbox.stub(ApiHelper, 'validateKey', ->
-        return {success:false}
-      )
+      validateKeyStub = this.sandbox.stub ApiHelper, 'validateKey', (key, callback) -> callback false
 
       for pkg in mockPackages
         expectedObject[pkg._id] = pkg.version
@@ -79,13 +77,13 @@ describe 'Package Api', ->
       request "http://127.0.0.1:3000/package/update.json?key=asdf", (err, res, body) ->
         assert.equal(res.statusCode, 200)
         assert.deepEqual(JSON.parse(body), expectedObject)
-
         assert.isTrue(validateKeyStub.calledOnce)
 
         request "http://127.0.0.1:3000/package/update.json", (err, res, body) ->
           assert.equal(res.statusCode, 200)
           assert.deepEqual(JSON.parse(body), expectedObject)
 
+          # No additional validation should get done if no key is set
           assert.isTrue(validateKeyStub.calledOnce)
           done()
 
@@ -145,7 +143,6 @@ describe 'Package Api', ->
         assert.deepEqual(JSON.parse(body), expectedData)
         done()
 
-
     it 'reacts correctly on nonexisting ID', (done) ->
       this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> res.send('[]', 404)
 
@@ -175,6 +172,32 @@ describe 'Package Api', ->
       request testUrl, (err, res, body) ->
         assert.equal(res.statusCode, 200)
         assert.deepEqual(JSON.parse(body), expectedData)
+
+        done()
+
+    it 'validates key if necessary', (done) ->
+      this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> callback mockPackages[1]
+      requireKeyStub = this.sandbox.stub ApiHelper, 'requireKey', (req, res, callback) -> callback()
+
+      testPkg = mockPackages[1]
+      testUrl = "http://127.0.0.1:3000/package/#{testPkg._id}/install.json?key=foo"
+
+      expectedData = {
+        id: testPkg._id,
+        name: testPkg.name,
+        version: testPkg.version,
+        smallIcon: testPkg.smallIcon,
+        pageUrl: testPkg.pageUrl,
+        country: testPkg.country,
+        routing: testPkg.routing,
+        hosts: testPkg.hosts
+      }
+
+      request testUrl, (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(JSON.parse(body), expectedData)
+        assert.isTrue(requireKeyStub.calledOnce)
+
         done()
 
     it 'reacts correctly on nonexisting ID', (done) ->

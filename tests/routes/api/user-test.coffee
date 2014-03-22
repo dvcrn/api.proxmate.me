@@ -53,7 +53,7 @@ describe 'User Api', ->
   describe 'validate', ->
     it 'should return isValid:false on invalid key', (done) ->
       # the validator module will return false so we can test our response
-      validateKeyStub = this.sandbox.stub ApiHelper, 'validateKey', -> {success: false, message: 'foo'}
+      validateKeyStub = this.sandbox.stub ApiHelper, 'validateKey', (k, c) -> c false, 'foo'
 
       request "http://127.0.0.1:3000/user/validate/foo.json", (err, res, body) ->
         assert.equal(res.statusCode, 200)
@@ -61,7 +61,7 @@ describe 'User Api', ->
         done()
 
     it 'should return isValid: true on correct key', (done) ->
-      validateKeyStub = this.sandbox.stub ApiHelper, 'validateKey', -> {success: true}
+      validateKeyStub = this.sandbox.stub ApiHelper, 'validateKey', (k, c) -> c true
 
       request "http://127.0.0.1:3000/user/validate/asdf.json", (err, res, body) ->
         assert.equal(res.statusCode, 200)

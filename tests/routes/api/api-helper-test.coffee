@@ -155,9 +155,8 @@ describe 'Api Helper', ->
       assert.isTrue(resMock.json.calledWith({message: 'This ressource requires a valid key. Do you have one?'}, 401))
 
     it 'should return 401 and message on key error', ->
-      validationStub = this.sandbox.stub(ApiHelper, 'validateKey', ->
-        return {success: false, message: 'foobar'}
-      )
+      validationStub = this.sandbox.stub ApiHelper, 'validateKey', (key, callback) ->
+        callback false, 'foobar'
 
       resMock =
         json: this.sandbox.spy()
@@ -166,14 +165,17 @@ describe 'Api Helper', ->
         query:
           key: 'foo'
 
-      ApiHelper.requireKey(reqMock, resMock)
+      callbackSpy = this.sandbox.spy()
+
+      ApiHelper.requireKey(reqMock, resMock, callbackSpy)
       assert.isTrue(resMock.json.calledOnce)
       assert.isTrue(resMock.json.calledWith({message: 'foobar'}, 401))
 
+      assert.isFalse(callbackSpy.calledOnce)
+
     it 'should return true on valid key', ->
-      validationStub = this.sandbox.stub(ApiHelper, 'validateKey', ->
-        return {success: true}
-      )
+      validationStub = this.sandbox.stub ApiHelper, 'validateKey', (key, callback) ->
+        callback true
 
       resMock =
         json: this.sandbox.spy()
@@ -182,5 +184,6 @@ describe 'Api Helper', ->
         query:
           key: 'foo'
 
-      res = ApiHelper.requireKey(reqMock, resMock)
-      assert.isTrue(res)
+      callbackSpy = this.sandbox.spy()
+      ApiHelper.requireKey(reqMock, resMock, callbackSpy)
+      assert.isTrue(callbackSpy.calledOnce)

@@ -16,11 +16,12 @@ exports.validate = (req, res) ->
   ApiHelper.setJson(res)
   if not req.params.key?
     res.json({isValid: false, message: 'No key set'})
+    return
 
   key = req.params.key
-
-  validationResult = ApiHelper.validateKey(key)
-  if validationResult.success
-    res.json({isValid: true})
-  else
-    res.json({isValid: false, message: validationResult.message})
+  ApiHelper.validateKey key, (status, message) ->
+    if status
+      res.json({isValid: true})
+    else
+      # console.info validationResult
+      res.json({isValid: false, message: message})

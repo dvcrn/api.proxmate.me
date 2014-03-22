@@ -26,37 +26,38 @@ class ApiHelper
   setJson: (responseObject) ->
     responseObject.set('Content-Type', 'application/json')
 
-  validateKey: (donationKey) ->
+  validateKey: (donationKey, callback) ->
     # Try to decrypt the key
     decipher = crypto.createDecipher('aes-256-cbc', config.crypto.pepper)
     decryptedKey = decipher.update(donationKey, 'base64', 'utf8');
     try
       decryptedKey = decryptedKey + decipher.final('utf8')
     catch error
-      return {success: false, message: 'The key you entered is invalid. Please provide a valid one.'}
+      return callback false, 'The key you entered is invalid. Please provide a valid one.'
 
     # Query to see if we have a user with that key
     User.findById(decryptedKey, (err, obj) ->
       if err or !obj
-        return {success: false, message: 'The key you entered is invalid. Please provide a valid one.'}
+        callback false, 'The key you entered is invalid. Please provide a valid one.'
+        return
 
       if new Date() >= obj.expiresAt
-        return {success: false, message: 'The key you have entered is not valid anymore. Please consider renewing it :)'}
+        callback false, 'The key you have entered is not valid anymore. Please consider renewing it :)'
+        return
 
-      return {success: true}
+      return callback true
     )
 
-  requireKey: (req, res) ->
+  requireKey: (req, res, callback) ->
     if not req.query.key
       res.json({message: 'This ressource requires a valid key. Do you have one?'}, 401)
       return false
 
-    validationResult = @validateKey(req.query.key)
-    if validationResult.success
-      return true
-
-    res.json({message: validationResult.message}, 401)
-    return false
-
+    @validateKey(req.query.key, (status, message) ->
+      if status
+        callback()
+      else
+        res.json({message: message}, 401)
+    )
 
 module.exports = new ApiHelper()
