@@ -8,6 +8,8 @@ sinon = require 'sinon'
 
 {mockUser} = require '../../testdata/single-user'
 
+ApiHelper = require('../../../routes/api/api-helper')
+
 describe 'User Api', ->
 
   before (done) ->
@@ -18,28 +20,16 @@ describe 'User Api', ->
     server.close()
     done()
 
+  beforeEach ->
+    this.sandbox = sinon.sandbox.create()
+  afterEach ->
+    this.sandbox.restore()
+
   describe 'detail', ->
-    beforeEach ->
-      this.sandbox = sinon.sandbox.create()
-
-      # Stub the findById function and return a mock user
-      this.sandbox.stub(api.User, 'findById', (id, callback) ->
-        if id is mockUser._id
-          callback null, mockUser
-        else
-          callback({
-            message: 'Cast to ObjectId failed for value "52e51a98217d32e2270e211f" at path "_id"',
-            name: 'CastError',
-            type: 'ObjectId',
-            value: '52e51a98217d32e2270e211f',
-            path: '_id'
-          }, null)
-      )
-
-    afterEach ->
-      this.sandbox.restore()
-
     it 'generates the detail page correctly', ->
+      # Fake helper to directly return the object
+      this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> callback mockUser
+
       expectedData = {
         username: mockUser.username,
         twitterHandle: mockUser.twitterHandle,
@@ -52,7 +42,28 @@ describe 'User Api', ->
         done()
 
     it 'reacts correctly on nonexisting ID', (done) ->
+      # Fake helper to always return 404
+      this.sandbox.stub ApiHelper, 'handleFindById', (model, id, res, callback) -> res.send('[]', 404)
+
       request "http://127.0.0.1:3000/user/ASDF.json", (err, res, body) ->
         assert.equal(res.statusCode, 404)
         assert.deepEqual(JSON.parse(body), [])
+        done()
+
+  describe 'validate', ->
+    it 'should return isValid:false on invalid key', (done) ->
+      # the validator module will return false so we can test our response
+      validateKeyStub = this.sandbox.stub ApiHelper, 'validateKey', -> {success: false, message: 'foo'}
+
+      request "http://127.0.0.1:3000/user/validate/foo.json", (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(JSON.parse(body), {isValid: false, message: 'foo'})
+        done()
+
+    it 'should return isValid: true on correct key', (done) ->
+      validateKeyStub = this.sandbox.stub ApiHelper, 'validateKey', -> {success: true}
+
+      request "http://127.0.0.1:3000/user/validate/asdf.json", (err, res, body) ->
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(JSON.parse(body), {isValid: true})
         done()

@@ -1,11 +1,12 @@
 express = require 'express'
 routes = require './routes'
-user = require './routes/user'
+
 packageApi = require './routes/api/package'
 serverApi = require './routes/api/server'
 countryApi = require './routes/api/country'
 userApi = require './routes/api/user'
 urlApi = require './routes/api/url'
+
 {headerMiddleware} = require './middleware/custom-header'
 config = require './config/app'
 
@@ -36,13 +37,16 @@ app.disable('x-powered-by')
 if 'development' == app.get('env')
   app.use(express.errorHandler())
 
-app.get('/users', user.list)
 app.get('/package/list.json', packageApi.list)
 app.get('/package/update.json', packageApi.update)
-app.get('/package/:id.json', packageApi.detail)
 app.get('/package/:id/install.json', packageApi.install)
+app.get('/package/:id.json', packageApi.detail)
+
 app.get('/server/list.json', serverApi.list)
+
+app.get('/user/validate/:key.json', userApi.validate)
 app.get('/user/:id.json', userApi.detail)
+
 app.get('/country/:id.json', countryApi.detail)
 app.get('/url/list.json', urlApi.list)
 
