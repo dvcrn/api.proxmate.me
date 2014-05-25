@@ -6,6 +6,7 @@ serverApi = require './routes/api/server'
 countryApi = require './routes/api/country'
 userApi = require './routes/api/user'
 urlApi = require './routes/api/url'
+paypalApi = require './routes/api/paypal'
 
 {headerMiddleware} = require './middleware/custom-header'
 config = require './config/app'
@@ -49,6 +50,8 @@ app.get('/user/:id.json', userApi.detail)
 
 app.get('/country/:id.json', countryApi.detail)
 app.get('/url/list.json', urlApi.list)
+app.get('/paypal/endpoint.json', paypalApi.endpoint)
+app.post('/paypal/endpoint.json', paypalApi.endpoint)
 
 if __dirname + '/server.js' == process.argv[1]
   http.createServer(app).listen app.get('port'), ->
