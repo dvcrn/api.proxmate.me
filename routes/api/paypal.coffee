@@ -18,7 +18,7 @@ exports.endpoint = (req, res) ->
     return
 
   # Make sure the IPN request is valid
-  ipn = Paypal.extractIpnFromRequest(req.body)
+  ipn = req.body
   Paypal.verifyIpn ipn, (isValid) ->
     if !isValid
       res.send('failure')
