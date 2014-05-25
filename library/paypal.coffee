@@ -69,7 +69,7 @@ class Paypal
 
     console.info 'request string: ' + requestString
 
-    request.get "https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate&#{requestString}", (err, res, body) ->
+    request.get "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_notify-validate&#{requestString}", (err, res, body) ->
       console.info 'got body from paypal:'
       console.info body
       if body == 'VERIFIED'
