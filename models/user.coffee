@@ -1,5 +1,6 @@
 mongoose = require('mongoose')
 sendgrid = require('../library/sendgrid')
+crypto = require('../library/crypto')
 
 Schema = mongoose.Schema
 ObjectId = Schema.ObjectId
@@ -23,7 +24,6 @@ userSchema = new Schema(
 )
 
 userSchema.statics.addDonationFromIpn = (user, ipn, callback) ->
-  # TODO: Add tests
   user.donationHistory.push {
     'amount': ipn.mc_gross,
     'currency': ipn.currency,
@@ -41,7 +41,8 @@ userSchema.statics.addDonationFromIpn = (user, ipn, callback) ->
     if err
       callback false
     else
-      sendgrid.sendDonationNotice(ipn.payer_email)
+      donationKey = crypto.encryptKey(user._id)
+      sendgrid.sendDonationNotice(ipn.payer_email, donationKey)
       callback true
 
 userSchema.statics.createOrUpdateIpn = (ipn, callback) ->

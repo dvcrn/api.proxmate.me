@@ -12,15 +12,6 @@ describe 'Paypal', ->
   afterEach ->
     this.sandbox.restore()
 
-  it 'should return only IPN information from input', ->
-    test1 = { 'foo': 'bar', 'payment_type': 'web_accept'}
-    test2 = { 'foo': 'bar', 'somethingElse': '123'}
-    test3 = { "address_zip": "95131", "first_name": "Test", "mc_fee": "0.88" }
-
-    assert.deepEqual({'payment_type': 'web_accept'}, paypal.extractIpnFromRequest(test1))
-    assert.deepEqual({}, paypal.extractIpnFromRequest(test2))
-    assert.deepEqual(test3, paypal.extractIpnFromRequest(test3))
-
   it 'should verify the IPN correctly', ->
     # Build a mock object we can pass
     requestStub = {}

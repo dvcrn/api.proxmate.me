@@ -1,7 +1,7 @@
 User = exports.User = require('../../models/user')
 
 config = exports.config = require '../../config/app'
-crypto = exports.crypto = require('crypto')
+crypto = exports.crypto = require('../../library/crypto')
 
 class ApiHelper
   handle: (model, functionName, query, responseObject, callback) ->
@@ -28,12 +28,7 @@ class ApiHelper
 
   validateKey: (donationKey, callback) ->
     # Try to decrypt the key
-    decipher = crypto.createDecipher('aes-256-cbc', config.crypto.pepper)
-    decryptedKey = decipher.update(donationKey, 'base64', 'utf8');
-    try
-      decryptedKey = decryptedKey + decipher.final('utf8')
-    catch error
-      return callback false, 'The key you entered is invalid. Please provide a valid one.'
+    decryptedKey = crypto.decryptKey(donationKey)
 
     # Query to see if we have a user with that key
     User.findById(decryptedKey, (err, obj) ->

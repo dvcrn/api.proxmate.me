@@ -3,6 +3,7 @@ sinon = require 'sinon'
 
 user = require '../../models/user'
 sendgrid = require('../../library/sendgrid')
+crypto = require('../../library/crypto')
 
 request = require 'request'
 
@@ -38,8 +39,9 @@ describe 'User', ->
         'paymentId': 'foobar'
       }], userStub.donationHistory)
 
-    it 'should call sendgrid on adding donationHistory', ->
+    it 'should call sendgrid and crypto on adding donationHistory', ->
       userStub = {
+        _id: 'foo',
         donationHistory: [],
         expiresAt: new Date(1401002097116),
         save: this.sandbox.stub().callsArg(0)
@@ -53,10 +55,12 @@ describe 'User', ->
       }
 
       sendgridSendStub = this.sandbox.stub(sendgrid, 'sendDonationNotice')
+      cryptoStub = this.sandbox.stub(crypto, 'encryptKey')
 
       callbackSpy = this.sandbox.spy()
       user.addDonationFromIpn(userStub, ipn, callbackSpy)
       assert.isTrue(sendgridSendStub.calledOnce)
+      assert.isTrue(cryptoStub.calledOnce)
       assert.isTrue(callbackSpy.calledOnce)
 
   describe 'get or create', ->
