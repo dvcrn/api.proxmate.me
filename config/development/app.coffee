@@ -8,4 +8,8 @@ module.exports =
     mongo_url: "mongodb://localhost/proxmate"
 
   crypto:
-    pepper: "Cek8dAct3E8on1wY3woV"
+    pepper: "salt"
+
+  sendgrid:
+    username: 'foo'
+    password: 'bar'
