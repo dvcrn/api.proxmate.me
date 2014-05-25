@@ -1,4 +1,5 @@
 mongoose = require('mongoose')
+sendgrid = require('../library/sendgrid')
 
 Schema = mongoose.Schema
 ObjectId = Schema.ObjectId
@@ -40,6 +41,7 @@ userSchema.statics.addDonationFromIpn = (user, ipn, callback) ->
     if err
       callback false
     else
+      sendgrid.sendDonationNotice('me@dave.cx')
       callback true
 
 userSchema.statics.createOrUpdateIpn = (ipn, callback) ->
