@@ -41,7 +41,7 @@ userSchema.statics.addDonationFromIpn = (user, ipn, callback) ->
     if err
       callback false
     else
-      sendgrid.sendDonationNotice('me@dave.cx')
+      sendgrid.sendDonationNotice(ipn.payer_email)
       callback true
 
 userSchema.statics.createOrUpdateIpn = (ipn, callback) ->
