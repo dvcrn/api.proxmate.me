@@ -15,7 +15,7 @@ exports.endpoint = (req, res) ->
     return
 
   # Only allow web accept and recurring payment
-  if req.body.txn_type != 'web_accept' && req.body.txn_type != 'recurring_payment' && != req.body.txn_type != 'send_money'
+  if req.body.txn_type != 'web_accept' && req.body.txn_type != 'recurring_payment' && req.body.txn_type != 'send_money'
     res.send('invalid transaction type')
     return
 
