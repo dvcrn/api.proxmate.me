@@ -5,6 +5,8 @@ class Paypal
     return request
 
   extractIpnFromRequest: (request) ->
+    console.info 'in extract ipn'
+    console.info request
     paypalParams = [
       "mc_gross",
       "protection_eligibility",
@@ -51,9 +53,13 @@ class Paypal
       if request[param]?
         out[param] = request[param]
 
+    console.info 'returning...'
+    console.info out
+
     return out
 
   verifyIpn: (ipn, callback) ->
+    console.info 'verifying IPN...'
     request = @getRequest()
 
     requestParams = []
@@ -61,7 +67,11 @@ class Paypal
       requestParams.push "#{param}=#{value}"
     requestString = requestParams.join '&'
 
+    console.info 'request string: ' + requestString
+
     request.get "https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate&#{requestString}", (err, res, body) ->
+      console.info 'got body from paypal:'
+      console.info body
       if body == 'VERIFIED'
         callback true
       else
