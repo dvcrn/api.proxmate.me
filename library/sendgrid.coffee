@@ -30,7 +30,8 @@ class Sendgrid
           if err
             console.info err
 
-          callback()
+          if callback?
+            callback()
       )
 
 module.exports = new Sendgrid()
