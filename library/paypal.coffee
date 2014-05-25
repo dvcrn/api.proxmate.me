@@ -13,7 +13,7 @@ class Paypal
     requestString = requestParams.join '&'
 
 
-    request.get "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_notify-validate&#{requestString}", (err, res, body) ->
+    request.get "https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate&#{requestString}", (err, res, body) ->
       if body == 'VERIFIED'
         callback true
       else
