@@ -30,7 +30,7 @@ describe 'Package Api', ->
 
   describe 'list', ->
     beforeEach ->
-      this.sandbox.stub ApiHelper, 'handleFind', (model, id, res, callback) -> callback mockPackages
+      this.sandbox.stub(ApiHelper, 'handleFind').callsArgWith(3, mockPackages)
 
     it 'should generate the package list correctly', (done) ->
       expectedArray = []
@@ -51,9 +51,7 @@ describe 'Package Api', ->
 
     it 'should generate the update list correctly', (done) ->
       expectedObject = {}
-      validateKeyStub = this.sandbox.stub(ApiHelper, 'validateKey', (key, callback) ->
-        callback true
-      )
+      validateKeyStub = this.sandbox.stub(ApiHelper, 'validateKey').callsArgWith(1, true)
 
       for pkg in mockPackages
         expectedObject[pkg._id] = pkg.version
@@ -67,7 +65,7 @@ describe 'Package Api', ->
 
     it 'should set donator packages to version -1 on wrong or no key', (done) ->
       expectedObject = {}
-      validateKeyStub = this.sandbox.stub ApiHelper, 'validateKey', (key, callback) -> callback false
+      validateKeyStub = this.sandbox.stub(ApiHelper, 'validateKey').callsArgWith(1, false)
 
       for pkg in mockPackages
         expectedObject[pkg._id] = pkg.version

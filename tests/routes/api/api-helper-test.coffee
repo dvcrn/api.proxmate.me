@@ -31,15 +31,13 @@ describe 'Api Helper', ->
       modelStub =
         findById: ->
 
-      findByIdStub = this.sandbox.stub(modelStub, 'findById', (id, callback) ->
-        callback({
+      findByIdStub = this.sandbox.stub(modelStub, 'findById').callsArgWith(1, {
           message: 'Cast to ObjectId failed for value "asdfa345345sdfakosdfjasdf" at path "_id"',
           name: 'CastError',
           type: 'ObjectId',
           value: 'asdfa345345sdfakosdfjasdf',
           path: '_id'
         }, null)
-      )
 
       resStub =
         send: this.sandbox.spy()
@@ -58,11 +56,7 @@ describe 'Api Helper', ->
       modelStub =
         findById: ->
 
-      findByIdStub = this.sandbox.stub(modelStub, 'findById', (id, callback) ->
-        callback({
-          name: 'Foo'
-        }, null)
-      )
+      findByIdStub = this.sandbox.stub(modelStub, 'findById').callsArgWith(1, { name: 'Foo'}, null)
 
       resStub =
         send: this.sandbox.spy()
@@ -81,9 +75,7 @@ describe 'Api Helper', ->
       modelStub =
         findById: ->
 
-      findByIdStub = this.sandbox.stub(modelStub, 'findById', (id, callback) ->
-        callback(null, null)
-      )
+      findByIdStub = this.sandbox.stub(modelStub, 'findById').callsArgWith(1, null, null)
 
       resStub =
         send: this.sandbox.spy()
@@ -102,9 +94,7 @@ describe 'Api Helper', ->
       modelStub =
         findById: ->
 
-      findByIdStub = this.sandbox.stub(modelStub, 'findById', (id, callback) ->
-        callback(null, {foo:'bar'})
-      )
+      findByIdStub = this.sandbox.stub(modelStub, 'findById').callsArgWith(1, null, {foo:'bar'})
 
       resStub =
         send: this.sandbox.spy()
@@ -120,9 +110,7 @@ describe 'Api Helper', ->
       assert.isTrue(callback.calledWith({foo:'bar'}))
 
     it 'should execute handle on shortcut methods', ->
-      handleStub = this.sandbox.stub(ApiHelper, 'handle', ->
-        return 'foo'
-      )
+      handleStub = this.sandbox.stub(ApiHelper, 'handle').returns('foo')
       callback = this.sandbox.spy()
 
       ApiHelper.handleFindById('model', {}, {}, callback)
@@ -155,8 +143,7 @@ describe 'Api Helper', ->
       assert.isTrue(resMock.json.calledWith({message: 'This ressource requires a valid key. Do you have one?'}, 401))
 
     it 'should return 401 and message on key error', ->
-      validationStub = this.sandbox.stub ApiHelper, 'validateKey', (key, callback) ->
-        callback false, 'foobar'
+      validationStub = this.sandbox.stub(ApiHelper, 'validateKey').callsArgWith(1, false, 'foobar')
 
       resMock =
         json: this.sandbox.spy()
@@ -174,8 +161,7 @@ describe 'Api Helper', ->
       assert.isFalse(callbackSpy.calledOnce)
 
     it 'should return true on valid key', ->
-      validationStub = this.sandbox.stub ApiHelper, 'validateKey', (key, callback) ->
-        callback true
+      validationStub = this.sandbox.stub(ApiHelper, 'validateKey').callsArgWith(1, true)
 
       resMock =
         json: this.sandbox.spy()
