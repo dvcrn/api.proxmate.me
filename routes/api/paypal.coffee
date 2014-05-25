@@ -7,15 +7,13 @@ exports.endpoint = (req, res) ->
     res.send('please use post')
     return
 
-  console.info req.body
-
   # Make sure we are getting valid json in the request
   if !req.body.txn_type?
     res.send('invalid payload')
     return
 
   # Only allow web accept and recurring payment
-  if req.body.txn_type != 'web_accept' && req.body.txn_type != 'recurring_payment' && req.body.txn_type != 'send_money'
+  if req.body.txn_type != 'web_accept' && req.body.txn_type != 'recurring_payment'
     res.send('invalid transaction type')
     return
 

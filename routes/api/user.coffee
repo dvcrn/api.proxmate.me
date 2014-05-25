@@ -23,5 +23,4 @@ exports.validate = (req, res) ->
     if status
       res.json({isValid: true})
     else
-      # console.info validationResult
       res.json({isValid: false, message: message})
