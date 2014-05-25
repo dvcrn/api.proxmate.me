@@ -41,7 +41,7 @@ userSchema.statics.addDonationFromIpn = (user, ipn, callback) ->
     if err
       callback false
     else
-      donationKey = crypto.encryptKey(user._id)
+      donationKey = crypto.encryptKey(user._id.toString())
       sendgrid.sendDonationNotice(ipn.payer_email, donationKey)
       callback true
 

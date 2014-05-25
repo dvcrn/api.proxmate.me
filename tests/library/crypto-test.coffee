@@ -10,8 +10,8 @@ describe 'Crypto', ->
     config.crypto.pepper = 'salt'
 
   describe 'normal length', ->
-    token = '532ee1f1beb64d4cd8859fad'
-    encryptedToken = "s+/KdIdPLWzsSVywB47hESKLK0Y7q1u6vjWig8EulTY="
+    token = '5381b860467088b687097307'
+    encryptedToken = "eACZH/aqRSC4/cqrTFX+uuCdXEKPV06ItIu1w2jygJw="
     it 'encrypt keys', ->
       assert.equal(encryptedToken, crypto.encryptKey(token))
 
