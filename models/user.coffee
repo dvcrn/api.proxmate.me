@@ -13,7 +13,8 @@ userSchema = new Schema(
   donationHistory: [{
     amount: Number,
     currency: String,
-    date: {type: Date, default: Date.now}
+    date: {type: Date, default: Date.now},
+    paymentId: String
   }],
 
   expiresAt: {type: Date, default: Date.now},
@@ -21,12 +22,19 @@ userSchema = new Schema(
 )
 
 userSchema.statics.addDonationFromIpn = (user, ipn, callback) ->
-  # TODO: extend token validity
+  # TODO: Add tests
   user.donationHistory.push {
     'amount': ipn.mc_gross,
     'currency': ipn.currency,
-    'date': ipn.payment_date
+    'date': ipn.payment_date,
+    'paymentId': ipn.txn_id
   }
+
+  # Add up the expiresAt date by 31 days
+  oldExpireDate = user.expiresAt
+  newExpireDate = new Date(oldExpireDate.getTime())
+  newExpireDate.setDate(oldExpireDate.getDate() + 31)
+  user.expiresAt = newExpireDate
 
   user.save (err) ->
     if err
@@ -34,7 +42,7 @@ userSchema.statics.addDonationFromIpn = (user, ipn, callback) ->
     else
       callback true
 
-userSchema.statics.createOrUpdateIpn = (ipn, callback ) ->
+userSchema.statics.createOrUpdateIpn = (ipn, callback) ->
   # Add reference to outer scope, since we need it in callback
   self = this
   self.find({email: ipn.payer_email}, (err, obj) ->
