@@ -22,7 +22,7 @@ class Sendgrid
       renderedTemplate = ejs.render(html, {'donationKey': donationKey})
       sg.send({
           to: receiver,
-          from: 'david@proxmate.me',
+          from: 'proxmate@personalitycores.com',
           fromname: 'ProxMate',
           subject: 'Your Donation to ProxMate!',
           html: renderedTemplate

@@ -23,7 +23,7 @@ describe 'Sendgrid', ->
       assert.isTrue(ejsStub.render.calledWith(sinon.match.any, {'donationKey': '123456789'}))
       assert.isTrue(sendGridStub.send.calledWith({
         to: 'foo@bar.de',
-        from: 'david@proxmate.me',
+        from: 'proxmate@personalitycores.com',
         fromname: 'ProxMate',
         subject: 'Your Donation to ProxMate!',
         html: 'template'
