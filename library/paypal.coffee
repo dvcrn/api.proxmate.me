@@ -12,7 +12,6 @@ class Paypal
     requestParams = []
 
     for param, value of ipn
-      value = value.replace(/%0A/ig, "%0D%0A")
       requestParams.push "#{param}=#{value}"
     requestString = requestParams.join '&'
 
