@@ -7,11 +7,15 @@ class Paypal
   verifyIpn: (ipn, callback) ->
     request = @getRequest()
 
+    console.info request
+
     requestParams = []
+
     for param, value of ipn
       requestParams.push "#{param}=#{value}"
     requestString = requestParams.join '&'
 
+    console.info requestString
 
     request.get "https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate&#{requestString}", (err, res, body) ->
       if body == 'VERIFIED'
