@@ -21,7 +21,7 @@ userSchema = new Schema(
 )
 
 userSchema.statics.addDonationFromIpn = (user, ipn, callback) ->
-  # TODO extend token validity
+  # TODO: extend token validity
   user.donationHistory.push {
     'amount': ipn.mc_gross,
     'currency': ipn.currency,
