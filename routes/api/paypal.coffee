@@ -7,6 +7,8 @@ exports.endpoint = (req, res) ->
     res.send('please use post')
     return
 
+  console.info req.body
+
   # Make sure we are getting valid json in the request
   if !req.body.txn_type?
     res.send('invalid payload')
