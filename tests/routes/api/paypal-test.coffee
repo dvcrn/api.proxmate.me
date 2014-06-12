@@ -68,6 +68,15 @@ describe 'Paypal API', ->
           },(err, res, body) ->
             assert.equal(200, res.statusCode)
             assert.notEqual(body, 'invalid transaction type')
+
+            request.post "http://127.0.0.1:3000/paypal/endpoint.json", {
+              form: {
+                "txn_type": 'subscr_payment'
+              }
+            },(err, res, body) ->
+              assert.equal(200, res.statusCode)
+              assert.notEqual(body, 'invalid transaction type')
+
             done()
 
     it 'should verify IPN and create a new user', (done) ->
