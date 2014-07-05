@@ -7,6 +7,7 @@ countryApi = require './routes/api/country'
 userApi = require './routes/api/user'
 urlApi = require './routes/api/url'
 paypalApi = require './routes/api/paypal'
+proxyApi = require './routes/api/proxy'
 
 {headerMiddleware} = require './middleware/custom-header'
 config = require './config/app'
@@ -52,6 +53,8 @@ app.get('/country/:id.json', countryApi.detail)
 app.get('/url/list.json', urlApi.list)
 app.get('/paypal/endpoint.json', paypalApi.endpoint)
 app.post('/paypal/endpoint.json', paypalApi.endpoint)
+
+app.get('/proxy/whitelist.json', proxyApi.whitelist)
 
 if __dirname + '/server.js' == process.argv[1]
   http.createServer(app).listen app.get('port'), ->
