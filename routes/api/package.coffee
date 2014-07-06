@@ -112,7 +112,8 @@ exports.install = (req, res) ->
       pageUrl: packageObject.pageUrl,
       country: packageObject.country,
       routing: packageObject.routing,
-      hosts: packageObject.hosts
+      hosts: packageObject.hosts,
+      contentScripts: packageObject.contentScripts
 
     # Check for accessLevel
     if packageObject.requireKey

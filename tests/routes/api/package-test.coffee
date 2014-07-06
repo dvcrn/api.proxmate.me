@@ -164,7 +164,8 @@ describe 'Package Api', ->
         pageUrl: testPkg.pageUrl,
         country: testPkg.country,
         routing: testPkg.routing,
-        hosts: testPkg.hosts
+        hosts: testPkg.hosts,
+        contentScripts: testPkg.contentScripts
       }
 
       request testUrl, (err, res, body) ->
@@ -188,7 +189,8 @@ describe 'Package Api', ->
         pageUrl: testPkg.pageUrl,
         country: testPkg.country,
         routing: testPkg.routing,
-        hosts: testPkg.hosts
+        hosts: testPkg.hosts,
+        contentScripts: testPkg.contentScripts
       }
 
       request testUrl, (err, res, body) ->
