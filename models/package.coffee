@@ -21,7 +21,7 @@ packageSchema = new Schema(
 
   hosts: Array,
   routing: Array,
-  contentScripts: Array,
+  contentScripts: Mixed,
 
   createdAt: {type: Date, default: Date.now}
 )
