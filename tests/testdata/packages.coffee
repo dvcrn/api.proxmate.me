@@ -30,10 +30,13 @@ test = [{
     "pandora.com",
     "*.pandora.com"
   ],
-  "contentScripts": {
-    "foo\\.com\\/.*": "Y29uc29sZS5pbmZvKCJoZWxsbyB3cm9sZCIpOw==",
-    "abc\\.com\\/[a-z]*": "Y29uc29sZS5pbmZvKCJoZWxsbyB3cm9sZCIpOw=="
-  }
+  "contentScripts": [{
+    "matches": "foo\\.com\\/.*",
+    "script": "Y29uc29sZS5pbmZvKCJoZWxsbyB3cm9sZCIpOw=="
+  }, {
+    "matches": "abc\\.com\\/.*",
+    "script": "Y29uc29sZS5pbmZvKCJoZWxsbyB3cm9sZCIpOw=="
+  }],
   "__v": 0
 }, {
   "name": "Test Package 2",
@@ -63,10 +66,13 @@ test = [{
     "pandora.com",
     "*.pandora.com"
   ],
-  "contentScripts": {
-    "foo\\.com\\/.*": "Y29uc29sZS5pbmZvKCJoZWxsbyB3cm9sZCIpOw==",
-    "abc\\.com\\/[a-z]*": "Y29uc29sZS5pbmZvKCJoZWxsbyB3cm9sZCIpOw=="
-  }
+  "contentScripts": [{
+    "matches": "foo\\.com\\/.*",
+    "script": "Y29uc29sZS5pbmZvKCJoZWxsbyB3cm9sZCIpOw=="
+  }, {
+    "matches": "abcd\\.com\\/.*",
+    "script": "Y29uc29sZS5pbmZvKCJoZWxsbyB3cm9sZCIpOw=="
+  }],
   "__v": 0
 }]
 
