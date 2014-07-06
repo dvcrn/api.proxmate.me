@@ -28,7 +28,14 @@ test = [{
   ],
   "hosts": [
     "pandora.com",
-    "*.pandora.com"
+    "*.pandora.com",
+    "foo.bar.netflix.com",
+    "abc.netflix.com",
+    "netflix.com",
+    "*.netflix.com",
+    "muh.com",
+    "abc.muh.com",
+    ".muh.com"
   ],
   "contentScripts": [{
     "matches": "foo\\.com\\/.*",

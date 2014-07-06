@@ -29,8 +29,9 @@ describe 'Proxy Api', ->
       )
 
       responseArray = [
-        'pandora.com',
-        '*.pandora.com',
+        '.netflix.com',
+        '.muh.com',
+        '.pandora.com'
       ]
 
       request "http://127.0.0.1:3000/proxy/whitelist.json", (err, res, body) ->
