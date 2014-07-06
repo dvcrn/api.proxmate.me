@@ -8,6 +8,7 @@ packageSchema = new Schema(
   name: String,
   description: String,
   requireKey: {type: Boolean, default: false},
+  isPrivate: {type: Boolean, default: false},
 
   smallIcon: String,
   bigIcon: String,

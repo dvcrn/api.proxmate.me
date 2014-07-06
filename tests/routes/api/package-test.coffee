@@ -35,14 +35,19 @@ describe 'Package Api', ->
     it 'should generate the package list correctly', (done) ->
       expectedArray = []
       for pkg in mockPackages
-        expectedArray.push {
-          id: pkg._id,
-          requireKey: pkg.requireKey,
-          name: pkg.name,
-          description: pkg.description,
-          smallIcon: pkg.smallIcon,
-          pageUrl: pkg.pageUrl
-        }
+        hide = false
+        if pkg.isPrivate != undefined
+          hide = pkg.isPrivate
+
+        if !hide
+          expectedArray.push {
+            id: pkg._id,
+            requireKey: pkg.requireKey,
+            name: pkg.name,
+            description: pkg.description,
+            smallIcon: pkg.smallIcon,
+            pageUrl: pkg.pageUrl
+          }
 
       request "http://127.0.0.1:3000/package/list.json", (err, res, body) ->
         assert.equal(res.statusCode, 200)
