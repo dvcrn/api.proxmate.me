@@ -12,15 +12,19 @@ exports.list = (req, res) ->
     responseArray = []
     # Strip package information down
     for pkg in packageCollection
-      if pkg.isPrivate == undefined && !pkg.isPrivate
-        responseArray.push {
-          id: pkg._id,
-          requireKey: pkg.requireKey,
-          name: pkg.name,
-          description: pkg.description,
-          smallIcon: pkg.smallIcon,
-          pageUrl: pkg.pageUrl
-        }
+        hide = false
+        if pkg.isPrivate != undefined
+          hide = pkg.isPrivate
+
+        if !hide
+          responseArray.push {
+            id: pkg._id,
+            requireKey: pkg.requireKey,
+            name: pkg.name,
+            description: pkg.description,
+            smallIcon: pkg.smallIcon,
+            pageUrl: pkg.pageUrl
+          }
 
     res.json(responseArray)
   )
