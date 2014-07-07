@@ -30,6 +30,9 @@ class ApiHelper
     # Try to decrypt the key
     decryptedKey = crypto.decryptKey(donationKey)
 
+    if not decryptedKey
+      callback false, 'Misformated key.'
+
     # Query to see if we have a user with that key
     User.findById(decryptedKey, (err, obj) ->
       if err or !obj

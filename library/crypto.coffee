@@ -30,9 +30,12 @@ class Crypto
       decryptedKey = decryptedKey + cipher.final('utf8')
     catch error
       # Short key
-      decipher = @getDecipher()
-      cipher.update(key, 'base64', 'utf8')
-      decryptedKey = decipher.final('utf8')
+      try
+        decipher = @getDecipher()
+        cipher.update(key, 'base64', 'utf8')
+        decryptedKey = decipher.final('utf8')
+      catch error
+        decryptedKey = null
 
     return decryptedKey
 

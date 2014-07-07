@@ -160,7 +160,7 @@ describe 'Api Helper', ->
 
       assert.isFalse(callbackSpy.calledOnce)
 
-    it 'should return true on valid key', ->
+    it 'should call callback on valid key', ->
       validationStub = this.sandbox.stub(ApiHelper, 'validateKey').callsArgWith(1, true)
 
       resMock =
