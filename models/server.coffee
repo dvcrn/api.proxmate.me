@@ -12,7 +12,9 @@ serverSchema = new Schema(
   password: String,
   country: ObjectId,
   ip: String,
-  createdAt: {type: Date, default: Date.now}
+  createdAt: {type: Date, default: Date.now},
+  isPrivate: {type: Boolean, default: false},
+  requireKey: {type: Boolean, default: false}
 )
 
 module.exports = mongoose.model('Server', serverSchema)
