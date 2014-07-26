@@ -83,7 +83,7 @@ describe 'Proxy Api', ->
         done()
 
     it "should create a new domain record if doesn't exist", (done) ->
-      addCnameStub = this.sandbox.stub(Cloudflare, 'addCname').callsArgWith(2, {rec_id: 'foo'})
+      addARecordStub = this.sandbox.stub(Cloudflare, 'addARecord').callsArgWith(2, {rec_id: 'foo'})
       proxyApi.Server.find.restore()
       this.sandbox.stub(proxyApi.Server, 'find').callsArgWith(1, null, [])
       serverCreateStub = this.sandbox.stub(proxyApi.Server, 'create').callsArgWith(1, null, [])
@@ -97,9 +97,9 @@ describe 'Proxy Api', ->
           'port': '8000',
         }
       }, (err, res, body) ->
-        assert.isTrue(addCnameStub.calledOnce, 'addCname called')
+        assert.isTrue(addARecordStub.calledOnce, 'addARecord called')
         assert.isTrue(serverCreateStub.calledOnce, 'server create called')
-        assert.isTrue(addCnameStub.calledWith('foo.bar', '127.0.0.1'), 'addcname got correct parameters')
+        assert.isTrue(addARecordStub.calledWith('foo.bar', '127.0.0.1'), 'addarecord got correct parameters')
         assert.isTrue(serverCreateStub.calledWith({
           host: 'foo.bar',
           port: '8000',

@@ -15,6 +15,14 @@ class Cloudflare
         return prev
       , false
 
+  addARecord: (domain, target, fn) ->
+    @cloudflare.addDomainRecord config.cloudflare.domain, {
+      type: 'A',
+      name: domain,
+      content: target
+    }, (err, res) ->
+      fn res
+
   addCname: (domain, target, fn) ->
     @cloudflare.addDomainRecord config.cloudflare.domain, {
       type: 'CNAME',

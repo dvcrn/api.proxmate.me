@@ -73,7 +73,7 @@ exports.heartbeat = (req, res) ->
         ip: ip,
         isPrivate: true
       }, (err, server) ->
-        Cloudflare.addCname(req.body.hostname, ip, ->
+        Cloudflare.addARecord(req.body.hostname, ip, ->
           res.json({success: true, created: true})
         )
       )
