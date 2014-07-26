@@ -52,7 +52,7 @@ exports.whitelist = (req, res) ->
   )
 
 exports.heartbeat = (req, res) ->
-  ip = req.ip
+  ip = req.headers['fastly-client-ip'] || req.ip
   if req.method == 'GET'
     res.send('please use post')
     return
