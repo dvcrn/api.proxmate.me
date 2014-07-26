@@ -13,3 +13,9 @@ module.exports =
   sendgrid:
     username: 'foo'
     password: 'bar'
+
+  cloudflare:
+    accesskey: 'foobar'
+    email: ''
+    token: 'token'
+    domain: 'proxmate.me'

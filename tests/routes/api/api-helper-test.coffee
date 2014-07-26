@@ -121,6 +121,22 @@ describe 'Api Helper', ->
       assert.isTrue(handleStub.calledTwice)
       assert.isTrue(handleStub.calledWith('model', 'findById', {}, {}, callback))
 
+  describe 'no responseobject shortcut', ->
+    it 'should call callback with null if the database response is empty', ->
+      modelStub =
+        findById: ->
+
+      findByIdStub = this.sandbox.stub(modelStub, 'findById').callsArgWith(1, null, null)
+
+      callback = this.sandbox.spy()
+
+      ApiHelper.handle(modelStub, 'findById', {}, callback)
+      assert.isTrue(findByIdStub.calledOnce)
+      assert.isTrue(findByIdStub.calledWith({}))
+
+      assert.isTrue(callback.calledOnce)
+      assert.isTrue(callback.calledWith(null))
+
   describe 'header setting', ->
     it 'should set header to json on json()', ->
       resStub =

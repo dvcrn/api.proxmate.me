@@ -21,7 +21,7 @@ app = express()
 exports.app = app
 exports.server = http.createServer(app)
 
-
+app.enable('trust proxy')
 app.set 'port', process.argv[2] || 3000
 app.set 'views', path.join(__dirname, 'views')
 app.set 'view engine', 'ejs'
@@ -55,6 +55,8 @@ app.get('/paypal/endpoint.json', paypalApi.endpoint)
 app.post('/paypal/endpoint.json', paypalApi.endpoint)
 
 app.get('/proxy/whitelist.json', proxyApi.whitelist)
+app.get('/proxy/heartbeat.json', proxyApi.heartbeat)
+app.post('/proxy/heartbeat.json', proxyApi.heartbeat)
 
 if __dirname + '/server.js' == process.argv[1]
   http.createServer(app).listen app.get('port'), ->

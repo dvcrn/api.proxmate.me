@@ -5,16 +5,32 @@ crypto = exports.crypto = require('../../library/crypto')
 
 class ApiHelper
   handle: (model, functionName, query, responseObject, callback) ->
+    directlyHandleRequest = true
+    if typeof responseObject == 'function'
+      callback = responseObject
+      directlyHandleRequest = false
+
+    result = []
+    error = false
     model[functionName](query, (err, databaseObject) ->
       if err
+        error = true
         if err.name is 'CastError'
-          responseObject.send(404, '[]')
+          result = [404, '[]']
         else
-          responseObject.send(500, '[]')
+          result = [500, '[]']
       else if !databaseObject
-        responseObject.send(404, '[]')
+        error = true
+        result = [404, '[]']
       else
-        callback databaseObject
+        result = [databaseObject]
+
+      if error and directlyHandleRequest
+        responseObject.send.apply(this, result)
+      else if error
+        callback null
+      else
+        callback.apply(this, result)
     )
 
   handleFindById: (model, id, responseObject, callback) ->

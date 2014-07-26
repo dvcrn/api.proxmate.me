@@ -1,7 +1,9 @@
 Pkg = exports.Pkg = require('../../models/package')
 Country = exports.Country = require('../../models/country')
+Server = exports.Server = require('../../models/server')
 
-config = require '../../config/app'
+Config = require '../../config/app'
+Cloudflare = require '../../library/cloudflare'
 
 ApiHelper = require('./api-helper')
 
@@ -48,3 +50,34 @@ exports.whitelist = (req, res) ->
 
     res.json(Object.keys(whitelist))
   )
+
+exports.heartbeat = (req, res) ->
+  ip = req.ip
+  if req.method == 'GET'
+    res.send('please use post')
+    return
+
+  if req.query.accesskey != Config.cloudflare.accesskey
+    res.send('invalid access key')
+    return
+
+  ApiHelper.setJson(res)
+  ApiHelper.handleFind(Server, {'host': req.body.hostname}, (serverCollection) ->
+    if serverCollection == null or serverCollection.length == 0
+      Server.create({
+        host: req.body.hostname,
+        port: req.body.port,
+        user: req.body.username,
+        password: req.body.password,
+        countryId: req.body.countryId,
+        ip: ip,
+        isPrivate: true
+      }, (err, server) ->
+        Cloudflare.addCname(req.body.hostname, ip, ->
+          res.json({success: true, created: true})
+        )
+      )
+    else
+      res.json({success: true, created: false})
+  )
+
