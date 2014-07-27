@@ -105,7 +105,7 @@ describe 'Proxy Api', ->
           port: '8000',
           user: 'foo',
           password: 'foobar',
-          countryId: 'foobar',
+          country: 'foobar',
           ip: '127.0.0.1',
           isPrivate: true
         }), 'serverCreate got correct parameters')

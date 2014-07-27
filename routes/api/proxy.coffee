@@ -69,7 +69,7 @@ exports.heartbeat = (req, res) ->
         port: req.body.port,
         user: req.body.username,
         password: req.body.password,
-        countryId: req.body.countryId,
+        country: req.body.countryId,
         ip: ip,
         isPrivate: true
       }, (err, server) ->
