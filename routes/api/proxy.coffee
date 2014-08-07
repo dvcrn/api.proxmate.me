@@ -7,6 +7,8 @@ Cloudflare = require '../../library/cloudflare'
 
 ApiHelper = require('./api-helper')
 
+Url = require 'url'
+
 exports.whitelist = (req, res) ->
   ApiHelper.setJson(res)
   ApiHelper.handleFind(Pkg, {}, res, (packageCollection) ->
@@ -41,11 +43,16 @@ exports.whitelist = (req, res) ->
 
     for pkg in packageCollection
       for routing in pkg.routing
+        if routing.startsWith
+          addHostToWhitelist Url.parse(routing.startsWith).host
+
         if routing.host
           addHostToWhitelist(routing.host)
 
+
       for host in pkg.hosts
         addHostToWhitelist(host)
+
 
 
     res.json(Object.keys(whitelist))
