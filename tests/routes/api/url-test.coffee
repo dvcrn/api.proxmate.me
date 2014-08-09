@@ -34,7 +34,7 @@ describe 'Url Api', ->
       expectedOutput.push('http://proxmate.me/')
       expectedOutput.push('http://proxmate.me/packages')
       expectedOutput.push('http://proxmate.me/about')
-      expectedOutput.push('http://proxmate.me/donate')
+      expectedOutput.push('http://proxmate.me/support')
       expectedOutput.push('http://proxmate.me/package/foo')
       expectedOutput.push('http://proxmate.me/package/foo123')
       expectedOutput.push('http://proxmate.me/package/foo12345')
