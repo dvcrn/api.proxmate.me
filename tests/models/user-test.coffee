@@ -96,6 +96,43 @@ describe 'User', ->
       user.createOrUpdateIpn(ipn, callback)
       assert.isTrue(donationHistoryStub.calledWith({'foo': 'bar'}, ipn, callback))
 
+    it 'should calculate the new expiry date correctly if user exists', ->
+      now = new Date()
+      mockUser = [{'foo': 'bar', 'donationHistory': [], 'expiresAt': now, save: -> }]
+      findMock = this.sandbox.stub(user, 'find').callsArgWith(1, null, mockUser)
+
+      callback = this.sandbox.spy()
+      ipn = {
+        first_name: 'first'
+        last_name: 'last',
+        payer_email: 'email',
+      }
+
+      user.createOrUpdateIpn(ipn, callback)
+      expectedDate = new Date(now.getTime())
+      expectedDate.setDate(now.getDate() + 30)
+      assert.isTrue(mockUser[0].expiresAt > expectedDate)
+
+    it 'should calculate the new expiry date if in the old date is in the past', ->
+      now = new Date()
+      fakeDate = new Date(now.getTime())
+      fakeDate.setDate(now.getDate() - 31)
+
+      mockUser = [{'foo': 'bar', 'donationHistory': [], 'expiresAt': fakeDate, save: -> }]
+      findMock = this.sandbox.stub(user, 'find').callsArgWith(1, null, mockUser)
+
+      callback = this.sandbox.spy()
+      ipn = {
+        first_name: 'first'
+        last_name: 'last',
+        payer_email: 'email',
+      }
+
+      user.createOrUpdateIpn(ipn, callback)
+      expectedDate = new Date(now.getTime())
+      expectedDate.setDate(now.getDate() + 30)
+      assert.isTrue(mockUser[0].expiresAt > expectedDate)
+
     it 'should add donation history point on user createion', ->
       findMock = this.sandbox.stub(user, 'find').callsArgWith(1, null, [])
       donationHistoryStub = this.sandbox.stub(user, 'addDonationFromIpn')

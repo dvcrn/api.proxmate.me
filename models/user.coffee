@@ -34,6 +34,10 @@ userSchema.statics.addDonationFromIpn = (user, ipn, callback) ->
   # Add up the expiresAt date by 31 days
   oldExpireDate = user.expiresAt
   newExpireDate = new Date(oldExpireDate.getTime())
+
+  if oldExpireDate.getTime() < new Date().getTime()
+    newExpireDate = new Date(new Date().getTime())
+
   newExpireDate.setDate(oldExpireDate.getDate() + 31)
   user.expiresAt = newExpireDate
 
