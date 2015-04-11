@@ -12,7 +12,7 @@ exports.list = (req, res) ->
     urls.push('http://proxmate.me/')
     urls.push('http://proxmate.me/packages')
     urls.push('http://proxmate.me/about')
-    urls.push('http://proxmate.me/support')
+    urls.push('http://proxmate.me/donate')
     urls.sort()
 
     res.json(urls)
