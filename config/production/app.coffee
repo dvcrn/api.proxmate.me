@@ -1,6 +1,6 @@
 module.exports =
   frontend:
-    host: "https://promate.me"
+    host: "https://proxmate.me"
     cache_age: 1800
     cdn_cache_age: 3600
 
