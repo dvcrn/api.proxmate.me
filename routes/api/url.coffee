@@ -7,12 +7,12 @@ exports.list = (req, res) ->
   ApiHelper.setJson(res)
   ApiHelper.handleFind(Pkg, {}, res, (packageCollection) ->
     for pkg in packageCollection
-      urls.push("http://proxmate.me/package/#{pkg._id}")
+      urls.push("https://proxmate.me/#!/package/#{pkg._id}")
 
-    urls.push('http://proxmate.me/')
-    urls.push('http://proxmate.me/packages')
-    urls.push('http://proxmate.me/about')
-    urls.push('http://proxmate.me/donate')
+    urls.push('https://proxmate.me/#!/')
+    urls.push('https://proxmate.me/#!/packages')
+    urls.push('https://proxmate.me/#!/about')
+    urls.push('https://proxmate.me/#!/donate')
     urls.sort()
 
     res.json(urls)

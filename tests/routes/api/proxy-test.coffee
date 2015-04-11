@@ -96,6 +96,9 @@ describe 'Proxy Api', ->
           'password': 'foobar',
           'countryId': 'foobar',
           'port': '8000',
+        },
+        headers: {
+          'fastly-client-ip': "127.0.0.1"
         }
       }, (err, res, body) ->
         assert.isTrue(addARecordStub.calledOnce, 'addARecord called')

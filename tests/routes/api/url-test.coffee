@@ -31,13 +31,13 @@ describe 'Url Api', ->
       ]
 
       expectedOutput = []
-      expectedOutput.push('http://proxmate.me/')
-      expectedOutput.push('http://proxmate.me/packages')
-      expectedOutput.push('http://proxmate.me/about')
-      expectedOutput.push('http://proxmate.me/support')
-      expectedOutput.push('http://proxmate.me/package/foo')
-      expectedOutput.push('http://proxmate.me/package/foo123')
-      expectedOutput.push('http://proxmate.me/package/foo12345')
+      expectedOutput.push('https://proxmate.me/#!/')
+      expectedOutput.push('https://proxmate.me/#!/packages')
+      expectedOutput.push('https://proxmate.me/#!/about')
+      expectedOutput.push('https://proxmate.me/#!/donate')
+      expectedOutput.push('https://proxmate.me/#!/package/foo')
+      expectedOutput.push('https://proxmate.me/#!/package/foo123')
+      expectedOutput.push('https://proxmate.me/#!/package/foo12345')
       expectedOutput.sort()
 
       this.sandbox.stub(urlApi.Pkg, 'find', (config, callback) ->
