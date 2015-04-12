@@ -52,11 +52,11 @@ class ApiHelper
     # Query to see if we have a user with that key
     User.findById(decryptedKey, (err, obj) ->
       if err or !obj
-        callback false, 'The key you entered is invalid. Please provide a valid one.'
+        callback false, 'The key you entered is invalid or misformated. Please provide a valid one.'
         return
 
       if new Date() >= obj.expiresAt
-        callback false, 'The key you have entered is not valid anymore. Please consider renewing it :)'
+        callback false, 'Sorry, the key you have entered is not valid anymore. Please consider renewing it :). (Note: If you just renewed your key, it could take up to 10 minutes until the new one is propagated correctly)'
         return
 
       return callback true
@@ -64,7 +64,7 @@ class ApiHelper
 
   requireKey: (req, res, callback) ->
     if not req.query.key
-      res.json({message: 'This ressource requires a valid key. Do you have one?'}, 401)
+      res.json({message: 'This is a donator only package, sorry. Please make sure you have a valid donation key.'}, 401)
       return false
 
     @validateKey(req.query.key, (status, message) ->

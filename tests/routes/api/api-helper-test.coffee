@@ -156,7 +156,7 @@ describe 'Api Helper', ->
 
       ApiHelper.requireKey(reqMock, resMock)
       assert.isTrue(resMock.json.calledOnce)
-      assert.isTrue(resMock.json.calledWith({message: 'This ressource requires a valid key. Do you have one?'}, 401))
+      assert.isTrue(resMock.json.calledWith({message: 'This is a donator only package, sorry. Please make sure you have a valid donation key.'}, 401))
 
     it 'should return 401 and message on key error', ->
       validationStub = this.sandbox.stub(ApiHelper, 'validateKey').callsArgWith(1, false, 'foobar')
